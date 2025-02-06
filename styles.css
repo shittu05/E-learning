@@ -1,0 +1,92 @@
+/* Custom styles */
+
+
+.custom-card {
+  border-radius: 10px; /* Rounded corners */
+  padding: 20px; /* Increased padding inside the card */
+  height: 100%; /* Ensure cards take full height of their container */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.custom-card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out content evenly */
+  height: 100%; /* Ensure card body takes full height */
+}
+
+.card-title {
+  font-size: 1.5rem; /* Larger title */
+  margin-bottom: 15px; /* Space below title */
+}
+
+.card-text {
+  font-size: 1rem; /* Adjust text size */
+  margin-bottom: 20px; /* Space below text */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px; /* Increased button padding */
+  font-size: 1rem; /* Larger button text */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Background image with overlay */
+.bg-image {
+  background-image: url('Bglogin.svg'); /* Replace with your image path */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.bg-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(29, 81, 138, 0.858); /* Blue overlay with 70% opacity */
+}
+
+.bg-image > * {
+  position: relative; /* Ensure content is above the overlay */
+  z-index: 1;
+}
+
+.card {
+  border: 1px solid #cccdd2;
+  border-radius: 10px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .col-md-6 {
+    height: 50vh; /* Split height on smaller screens */
+  }
+}
