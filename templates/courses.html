@@ -30,7 +30,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       
       <div class="container">
-        <a class="navbar-brand" href="#">E-Learning</a>
+        <a class="navbar-brand" href="{% url 'index' %}">E-Learning</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -44,6 +44,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/logout/">Logout</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'courses' %}">Courses </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -51,7 +54,7 @@
 
     <div class="container mt-5">
       <h1 class="text-center mb-4">Welcome to E-Learning</h1>
-      <div class="container" style="margin-bottom:15px">
+      <div class="container" style="margin-bottom:25px">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="search-container position-relative">

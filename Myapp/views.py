@@ -21,6 +21,9 @@ def courses(request):
     courses = myFilter.qs
     if request.htmx:
         return render(request, 'partial.html', {'courses': courses, 'myFilter': myFilter})
+    else:
+        messages.info(request, 'Nothing Found')
+        redirect('courses')
     return render(request, 'courses.html', {'courses': courses, 'myFilter': myFilter})
 
 def course_detail(request, slug):
