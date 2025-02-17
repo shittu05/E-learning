@@ -1,0 +1,171 @@
+{% load static %} {% load widget_tweaks %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to E-learning</title>
+    <style>
+      /* Basic Reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        height: 100%;
+        font-family: "Arial", sans-serif;
+      }
+
+      /* Gradient Background */
+      .background {
+        background: linear-gradient(135deg, #ffffff, #f7f7f7, #eaeaea, #d5d5d5);
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: gradientAnimation 5s ease-in-out infinite;
+      }
+
+      /* Animation for the gradient background */
+      @keyframes gradientAnimation {
+        0% {
+          background: linear-gradient(
+            135deg,
+            #ffffff,
+            #f7f7f7,
+            #eaeaea,
+            #d5d5d5
+          );
+        }
+        50% {
+          background: linear-gradient(
+            135deg,
+            #f7f7f7,
+            #eaeaea,
+            #d5d5d5,
+            #ffffff
+          );
+        }
+        100% {
+          background: linear-gradient(
+            135deg,
+            #ffffff,
+            #f7f7f7,
+            #eaeaea,
+            #d5d5d5
+          );
+        }
+      }
+
+      /* Main Content */
+      .container {
+        text-align: center;
+        color: #333;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2e2e2e;
+        animation: fadeIn 2s ease-out;
+      }
+
+      /* Fade-in animation for the heading */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Button Styling */
+      .explore-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-top: 30px;
+        display: inline-block;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .explore-btn:hover {
+        background-color: #0056b3;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .explore-btn:active {
+        background-color: #004085;
+        transform: translateY(2px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background">
+      <div class="container">
+        <h1>Welcome to E-learning</h1>
+        <div class="form-customer des-font">
+          {% if messages %}
+          {% for message in messages %}
+            <script>
+              var messageType = "{{ message.tags }}";
+              var backgroundColor, image, messageColor; 
+              if (messageType === "error") {
+                backgroundColor = "#ff0000"; // Red color for error messages
+                messageColor = "white"; // White color for message text
+                image = "{% static 'assets/img/error.png' %}"; // Corrected image path
+              } else if (messageType === "success") {
+                backgroundColor = "#4CAF50"; // Green color for success messages
+                messageColor = "white"; // White color for message text
+                image = "{% static 'assets/img/check.png' %}"; // Corrected image path
+              
+              } else if (messageType === "info"){
+                backgroundColor = "#65B1D0"; // Green color for success messages
+                messageColor = "white";
+    
+              } else {
+                backgroundColor = "#000000"; // Default color
+                messageColor = "black"; // Black color for message text
+              }
+        
+              iziToast.show({
+                
+                message: '{{ message }}',
+                image : image,
+                position: 'topRight',
+                timeout: 5000,
+                transitionIn: 'bounceInUp',
+                transitionOut: 'flipOutX',
+                backgroundColor: backgroundColor, // Set background color based on message type
+                messageColor: messageColor, // Set message color
+                messageSize: '18',
+                
+              });
+            </script>
+              {% endfor %}
+            {% endif %}
+      </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'courses' %}" class="explore-btn">Explore</a>
+        {%else%}
+        <a href="{% url 'login' %}" class="explore-btn">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

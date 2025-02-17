@@ -1,0 +1,141 @@
+
+/* Global styles */
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+.header {
+    background-color: #fff;
+    padding: 20px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.back-btn {
+    font-size: 18px;
+    margin-right: 25px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.heading {
+    font-size: 24px;
+    margin-right: auto;
+}
+
+.customize-btn {
+    font-size: 16px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/* Main content styles */
+.main-content {
+    padding: 20px;
+}
+
+.product-container {
+    display: flex;
+}
+
+.main-product {
+    width: 60%;
+}
+
+.main-product-image img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+}
+
+.additional-images {
+    display: flex;
+    margin-top: 10px;
+}
+
+.additional-images img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.product-description {
+    width: 40%;
+    padding-left: 20px;
+}
+
+.description-text {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.delivery-info {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.delivery-link {
+    text-decoration: none;
+    color: #007751;
+}
+
+.delivery-link:hover {
+    color: #004d3f;
+}
+
+.description-heading {
+    font-size: 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.description-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    font-size: 16px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+    .product-container {
+        flex-direction: column; /* Change to vertical layout */
+        align-items: center; /* Center items horizontally */
+    }
+
+    .main-product {
+        width: 100%; /* Full width on smaller screens */
+    }
+
+    .product-description {
+        width: 100%; /* Full width on smaller screens */
+        padding-left: 0; /* Remove left padding */
+    }
+}

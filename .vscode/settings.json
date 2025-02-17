@@ -1,0 +1,7 @@
+{
+  "prettier.enable": false,
+  "prettier.useEditorConfig": false,
+  "[html]": {
+    "editor.formatOnSave": false
+  }
+}

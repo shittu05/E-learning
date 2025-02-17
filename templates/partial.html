@@ -1,0 +1,18 @@
+
+{% load static %} {% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="row" id ="parent-div">
+    {% for item in courses %}
+  <div class="col-md-4 mb-4">
+      <div class="card h-100 custom-card">
+        <div class="card-body">
+          <h5 class="card-title">{{ item.title }}</h5>
+          <p class="card-text">
+            {{ item.content|truncatewords:15|safe }}
+          </p>
+          <a href="{% url 'content' item.slug %}" class="btn btn-primary">Read more</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
