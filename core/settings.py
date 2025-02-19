@@ -169,6 +169,8 @@ AUTH_USER_MODEL = 'CustomUser.User'
 
 
 
+
+
 CKEDITOR_5_CONFIGS = {
     'default': {
         "blockToolbar": [
