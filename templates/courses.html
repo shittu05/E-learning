@@ -24,6 +24,7 @@
 
 <link rel="stylesheet" href="/static/assets/src/css/toast.styl">	
 <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   </head>
   <body>
@@ -41,12 +42,23 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/logout/">Logout</a>
-            </li>
+           
             <li class="nav-item">
               <a class="nav-link" href="{% url 'courses' %}">Courses </a>
             </li>
+            <li class="nav-item">
+                  <div class="dropdown">
+                 
+                    <i class="fa fa-user-o dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:20px;color:white" type="button"></i>
+                    <br/>
+                    
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">{{request.user.email}}</a></li>
+                      <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+                      
+                    </ul>
+                  </div>
+          </li>
           </ul>
         </div>
       </div>
@@ -54,36 +66,30 @@
 
     <div class="container mt-5">
       <h1 class="text-center mb-4">Welcome to E-Learning</h1>
-      <div class="container" style="margin-bottom:25px">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
+    
+          <div class="container my-4">
+            <div class="d-flex justify-content-center">
                 <div class="search-container position-relative">
-                    <form class="d-flex align-items-center" method="get" hx-get="{% url 'courses' %}"
-                    hx-target="#parent-div"
-                    hx-swap="outerHTML">
-                
+                    <form class="d-flex align-items-center" method="get" action="{% url 'courses' %}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="search-icon feather feather-search">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                       
+        
                         {% render_field myFilter.form.title class="form-control search-input ps-5" type="search" placeholder="Search anything..." aria-label="Search" %}
-
-                        <button class="btn btn-search ms-2" type="submit"  >Search</button>
-                        
+        
+                        <button class="btn btn-search ms-2" type="submit">Search</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
-    
+  
       {% include "partial.html" %}
 
   
-      </div>
-    </div>
+
 
    
 

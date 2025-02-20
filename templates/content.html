@@ -21,25 +21,35 @@
 <link rel="stylesheet" href="/static/assets/src/css/themes.styl">
 
 <link rel="stylesheet" href="/static/assets/src/css/toast.styl">	
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="index.html">E-Learning</a>
+      <a class="navbar-brand" href="{% url 'index' %}">E-Learning</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/logout/">Logout</a>
-          </li>
+          
           <li class="nav-item">
             <a class="nav-link" href="{% url 'courses' %}">Courses </a>
           </li>
+          <li class="nav-item">
+            <div class="dropdown">
+           
+              <i class="fa fa-user-o dropdown-toggle nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="font-size:20px;color:white" type="button"></i>
+              <br/>
+              
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">{{request.user.email}}</a></li>
+                <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+                
+              </ul>
+            </div>
+           </li>
         </ul>
       </div>
     </div>
@@ -48,9 +58,9 @@
   <div class="container mt-5">
     <h1 class="text-center mb-4"> {{item.title}}</h1>
    
-
+    
     <div class="row">
-  
+      
       <div class="col-md-8 offset-md-2">
         <div class="card p-4 shadow">
           {{item.content | safe}}
@@ -60,5 +70,72 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Select all video elements on the page
+    const videos = document.querySelectorAll('video');
+
+    // Attach event listeners to all video elements
+    videos.forEach(video => {
+        video.addEventListener('play', function() {
+            logVideoEvent(video, 'play');
+        });
+
+        video.addEventListener('pause', function() {
+            logVideoEvent(video, 'pause');
+        });
+
+        video.addEventListener('ended', function() {
+            logVideoEvent(video, 'ended');
+        });
+    });
+
+    // Function to log video event
+    function logVideoEvent(video, eventType) {
+        // Get the course title from the page
+        const courseTitle = '{{ item.title }}';  // From Django context
+        const courseId = '{{ item.id }}';  // From Django context
+
+        fetch('/learn/track_video_event/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token for Django
+            },
+            body: JSON.stringify({
+                video_id: video.src,  // Dynamically use the video source URL as the identifier
+                event_type: eventType,
+                timestamp: new Date().toISOString(),
+                course_id: courseId,
+                course_title: courseTitle,  // Add course title here
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Video event tracked:', data);
+        })
+        .catch(error => {
+            console.error('Error tracking video event:', error);
+        });
+    }
+
+    // Function to get CSRF token for Django (if needed)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+  
 </body>
 </html>

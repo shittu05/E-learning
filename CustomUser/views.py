@@ -72,7 +72,6 @@ def login(request):
  
         if user is not None:
             auth.login(request,user)
-            messages.success(request, f'Welcome {username}')
             return redirect('/learn/courses/')
         else:
             messages.error(request, 'invalid login details')

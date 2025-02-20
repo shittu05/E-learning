@@ -6,8 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include('CustomUser.urls')),
     path("learn/", include('Myapp.urls')),
-    path('ckeditor5/', include('django_ckeditor_5.urls')),  # CKEditor 5 URLs
-]
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 
-if settings.DEBUG:  # Serve media files during development
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

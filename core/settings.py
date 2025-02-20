@@ -35,8 +35,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    "unfold",
-    "unfold.contrib.filters",
+     "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,12 +48,14 @@ INSTALLED_APPS = [
 
     #3rd party
     'django_ckeditor_5',
+    'ckeditor',
+    "ckeditor_uploader",
     'easyaudit',
     'widget_tweaks',
     'django_filters',
     "crispy_forms",
     "crispy_bootstrap5",
-        "django_htmx",
+    "django_htmx",
 
 ]
 
@@ -169,36 +170,6 @@ AUTH_USER_MODEL = 'CustomUser.User'
 
 
 
-
-
-CKEDITOR_5_CONFIGS = {
-    'default': {
-        "blockToolbar": [
-            'heading', 'bold', 'italic', 'strikethrough', 'underline', 'link', 
-            'bulletedList', 'numberedList', 'blockQuote', 'codeBlock', 'imageUpload', 
-            'mediaEmbed', 'horizontalLine', 'highlight', 'alignment', 'subscript', 'superscript',
-        ],
-        "toolbar": [
-            'heading', '|', 'bold', 'italic', 'strikethrough', 'underline', 'link', 
-            'bulletedList', 'numberedList', 'blockQuote', '|', 'codeBlock', 'imageUpload', 
-            'mediaEmbed', 'horizontalLine', 'highlight', 'alignment', 'subscript', 'superscript', 
-            'undo', 'redo'
-        ],
-        "image": {
-            "toolbar": [
-                'imageTextAlternative', 'imageStyle:full', 'imageStyle:side','link', 'insertImage', 'mediaEmbed', 'fileUpload', 
-            ]
-        },
-        "table": {
-            "contentToolbar": [
-                'tableColumn', 'tableRow', 'mergeTableCells'
-            ]
-        },
-        "language": "en"
-    }
-}
-
-
 DJANGO_EASY_AUDIT_CHECK_IF_REQUEST_USER_EXISTS = True
 
 # settings.py
@@ -221,15 +192,60 @@ MESSAGE_TAGS = {
 }
 
 
-UNFOLD = {
-    "SITE_TITLE": "My E-Learning Admin",
-    "SITE_HEADER": "E-Learning Admin",
-    "SITE_URL": "/",  # Redirect when clicking on the site name
-    "SHOW_ACTIONS_ON_TOP": True,  # Show action buttons on top of list
-    "SHOW_ACTIONS_ON_BOTTOM": True,  # Show action buttons at bottom of list
-    "TABLES_SCROLLABLE": True,  # Allow horizontal scrolling for tables
-    "TABLES_NO_STRIPES": False,  # Keep striped table rows
-    "PRIMARY_COLOR": "#4CAF50",  # Customize primary theme color (green)
-    "SECONDARY_COLOR": "#FF9800",  # Customize secondary color (orange)
-    "FONT_FAMILY": "Arial, sans-serif",  # Set custom font
+
+JAZZMIN_SETTINGS = {
+    "site_title": "My E-Learning Admin",
+    "site_header": "E-Learning Admin",
+    "welcome_sign": "Welcome to the E-Learning Dashboard",
+    "site_brand": "E-Learning",
+    "copyright": " E-Learning Platform",
+    "search_model": "Myapp.Course",  # Replace 'yourapp' with your actual app name
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},  # Quick access to Users
+    ],
+    "changeform_format": "horizontal_tabs",  # "horizontal_tabs" or "collapsible"
+    "show_ui_builder": True,  # Show UI customization options
+    "icons": {
+        "CustomUser.User": "fas fa-user",
+        "auth.group": "fas fa-users",
+        "Myapp.Course": "fas fa-book",  # Customize icons for your models
+        "Myapp.VideoEvent": "fas fa-video",
+    },
+    "custom_css": None,  # Add your custom CSS if needed
+    "custom_js": None,  # Add your custom JavaScript if needed
+}
+
+
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"  # Path to CKEditor files
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'height': 500,  # Editor height
+        'width': '100%',  # Editor width
+        'toolbar': 'full',  # Full toolbar
+        'extraPlugins': ','.join([
+            'uploadimage',  # Enables local image uploads
+            'filebrowser',  # Enables file browsing
+            'image2',  # Advanced image features
+            'widget',
+            'embed',  # Allows embedding YouTube, Vimeo, etc.
+            'embedsemantic',  # Improves embedding structure
+            'iframe',  # Allows adding iframes
+            'html5video',  # Adds the HTML5 video plugin
+        ]),
+        'contentsCss': [
+            '/static/unfold/css/main.css',  # Apply Unfold's main styles
+            '/static/unfold/css/admin.css',  # Apply Unfold's admin styles
+        ],
+        'bodyClass': 'unfold-body',  # Apply Unfold's body class
+        'filebrowserBrowseUrl': '/ckeditor/browse/',
+        'filebrowserUploadUrl': '/ckeditor/upload/',
+        'filebrowserImageBrowseUrl': '/ckeditor/browse/?type=Images',
+        'filebrowserImageUploadUrl': '/ckeditor/upload/?type=Images',
+    }
 }

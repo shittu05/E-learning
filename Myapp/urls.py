@@ -9,6 +9,7 @@ urlpatterns = [
    
     path("courses/", views.courses, name="courses"),
     path("content/<slug:slug>/", views.course_detail, name="content"),
+    path('track_video_event/', views.track_video_event, name='track_video_event'),
   
 
 ]
