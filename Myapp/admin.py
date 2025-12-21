@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, VideoEvent
+from .models import Course, VideoEvent, Submission
 from easyaudit.models import RequestEvent
 from easyaudit.admin import RequestEventAdmin
 import csv
@@ -54,3 +54,9 @@ class VideoEventAdmin(admin.ModelAdmin):
         return response
 
     export_as_csv.short_description = "Export Selected Video Events to CSV"
+
+@admin.register(Submission)
+class SubmissionAdmin(admin.ModelAdmin):  
+    list_display = ('title', 'user', 'submitted_at')
+    search_fields = ('title', 'user__email')
+    list_per_page = 30

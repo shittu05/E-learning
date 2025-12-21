@@ -34,3 +34,13 @@ class VideoEvent(models.Model):  # Use EasyAudit instead of AuditModel
 
     def __str__(self):
         return f"{self.event_type} event for video {self.video_id} in course {self.course_title}"
+
+
+class Submission(models.Model):
+    title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    answers = models.JSONField()  # Store answers as JSON
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Submission by {self.user} for {self.title}"

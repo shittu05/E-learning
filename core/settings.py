@@ -249,3 +249,6 @@ CKEDITOR_CONFIGS = {
         'filebrowserImageUploadUrl': '/ckeditor/upload/?type=Images',
     }
 }
+
+
+LOGIN_URL = 'login'

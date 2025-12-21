@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from .models import Course
+from .models import Course, Submission
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from .filters import CourseFilter
@@ -8,35 +8,217 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import VideoEvent
 import json
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 
 
-
-
 def courses(request):
-    if not request.user.is_authenticated:
-        messages.error(request, 'Please login to access the course content!')
-        return redirect('login')
+    return render(request, 'pre-directions.html')
 
-    courses = Course.objects.all()
-    myFilter = CourseFilter(request.GET, queryset=courses)
-    filtered_courses = myFilter.qs  # Apply search filter
+def video(request):
+    return render(request, 'video.html')
 
-    # Pagination
-    paginator = Paginator(filtered_courses, 12)  # Show 6 courses per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+@login_required
+def survey(request):
+    if request.method == 'POST':
+        title = 'Survey One'
+        user = request.user
+        answers = {
+            'survey1': request.POST.get('survey1'),
 
-    context = {
-        'courses': page_obj,  
-        'myFilter': myFilter,
-        'paginator': paginator,  
-        'page_obj': page_obj,  
-    }
+        }
+        existing_submission = Submission.objects.filter(user=user, title=title).first()
+        if existing_submission:
+            messages.error(request, 'You have already submitted this survey.')
+            return redirect('learning')
+        submission = Submission.objects.create(
+            title=title,
+            user=user,
+            answers=answers
+        )
+        messages.success(request, 'Survey submitted successfully!')
+        return redirect('learning')
+    else:
+        messages.error(request, 'Please fill in all fields.')
+        return render(request, 'survey.html')
+    return render(request, 'survey.html')
 
-    return render(request, 'courses.html', context)
+
+def learning(request):
+    return render(request, 'learning.html')
+
+def concept_map(request):
+    return render(request, 'concept-map.html')
+
+
+@login_required
+def problem_to_solve(request):
+    if request.method == 'POST':
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 11)
+        }
+
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+
+        if unanswered:
+            messages.error(
+                request, 
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve')
+
+        # Check for duplicate submission (optional)
+        existing = Submission.objects.filter(
+            user=request.user,
+            title='Problem to Solve'
+        ).first()
+
+        if existing:
+            messages.error(request, 'You have already submitted this survey.')
+            return redirect('post_test')
+
+        # Create submission
+        try:
+            submission = Submission.objects.create(
+                title='Problem to Solve',
+                user=request.user,
+                answers=answers
+            )
+            messages.success(request, 'Survey submitted successfully!')
+            return redirect('post_test')  # Change to your actual post-test URL name
+        except Exception as e:
+            messages.error(request, f'Error submitting survey: {str(e)}')
+            return render(request, 'problem-to-solve.html')
+    
+    # GET request - show the form
+    return render(request, 'problem-to-solve.html')
+
+
+@login_required
+def post_test(request):
+    if request.method == 'POST':
+        # Define correct answers
+        CORRECT_ANSWERS = {
+            'pt1': 'B',
+            'pt2': 'C',
+            'pt3': 'C',
+            'pt4': 'B',
+            'pt5': 'C',
+            'pt6': 'B',
+            'pt7': 'B',
+            'pt8': 'C',
+            'pt9': 'C',
+            'pt10': 'B'
+        }
+        
+        # Collect answers
+        answers = {
+            f'post{i}': request.POST.get(f'pt{i}', '').strip()
+            for i in range(1, 11)
+        }
+        
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+        
+        if unanswered:
+            messages.error(
+                request, 
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('post_test')
+        
+        # Calculate correct answers
+        correct_count = sum(
+            1 for i in range(1, 11)
+            if request.POST.get(f'pt{i}', '').strip() == CORRECT_ANSWERS[f'pt{i}']
+        )
+        
+        # Add correct count to answers dictionary
+        answers['correct'] = correct_count
+        
+        # Check for duplicate submission (optional)
+        existing = Submission.objects.filter(
+            user=request.user,
+            title='Post Test'
+        ).first()
+        
+        if existing:
+            messages.error(request, 'You have already submitted this post-test.')
+            return redirect('survey_two')  
+        
+        # Create submission
+        try:
+            submission = Submission.objects.create(
+                title='Post Test',
+                user=request.user,
+                answers=answers
+            )
+            messages.success(request, 'Post-test submitted successfully!')
+            return redirect('survey_two')  
+        except Exception as e:
+            messages.error(request, f'Error submitting post-test: {str(e)}')
+            return render(request, 'post-test.html')
+    
+    # GET request - show the form
+    return render(request, 'post-test.html')
+
+def survey_two(request):
+    if request.method == 'POST':
+        title = 'Survey Two'
+        user = request.user
+        answers = {
+            'survey2': request.POST.get('survey2'),
+        }
+        
+        # Check if survey2 field is empty
+        if not answers['survey2']:
+            messages.error(request, 'Please fill in all fields.')
+            return render(request, 'survey2.html')
+        
+        # Check for duplicate submission
+        existing_submission = Submission.objects.filter(user=user, title=title).first()
+        if existing_submission:
+            messages.error(request, 'You have already submitted this survey.')
+            return redirect('learning')
+        
+        # Create submission
+        submission = Submission.objects.create(
+            title=title,
+            user=user,
+            answers=answers
+        )
+        messages.success(request, 'Survey submitted successfully!')
+        return redirect('learning')
+    
+    # GET request - just render the form without error messages
+    return render(request, 'survey2.html')
+
+# def courses(request):
+#     if not request.user.is_authenticated:
+#         messages.error(request, 'Please login to access the course content!')
+#         return redirect('login')
+
+#     courses = Course.objects.all()
+#     myFilter = CourseFilter(request.GET, queryset=courses)
+#     filtered_courses = myFilter.qs  # Apply search filter
+
+#     # Pagination
+#     paginator = Paginator(filtered_courses, 12)  # Show 6 courses per page
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         'courses': page_obj,  
+#         'myFilter': myFilter,
+#         'paginator': paginator,  
+#         'page_obj': page_obj,  
+#     }
+
+#     return render(request, 'courses.html', context)
 
 
 def course_detail(request, slug):
@@ -76,3 +258,6 @@ def track_video_event(request):
         )
 
         return JsonResponse({'message': 'Video event tracked successfully'})
+
+
+
