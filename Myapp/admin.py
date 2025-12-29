@@ -18,8 +18,7 @@ admin.site.unregister(RequestEvent)
 @admin.register(RequestEvent)
 class CustomRequestEventAdmin(RequestEventAdmin, admin.ModelAdmin):  
     search_fields = ('user__email',)  
-    list_per_page = 30  
-   
+    list_per_page = 30 
 
 # ✅ Register VideoEvent with Django's ModelAdmin
 @admin.register(VideoEvent)

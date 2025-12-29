@@ -12,11 +12,19 @@ urlpatterns = [
     path("survey/", views.survey, name="survey"),
     path("learning-hub/", views.learning, name="learning"),
     path("concept-map/", views.concept_map, name="concept_map"),
+    path("concept-map-two/", views.concept_map_two, name="concept_map_two"),
+    path("concept-map-three/", views.concept_map_three, name="concept_map_three"),
     path("problem-to-solve/", views.problem_to_solve, name="problem_to_solve"),
+    path("problem-to-solve-two/", views.problem_to_solve_two, name="problem_to_solve_two"),
+    path("problem-to-solve-three/", views.problem_to_solve_three, name="problem_to_solve_three"),
     path("post-test/", views.post_test, name="post_test"),
     path("survey-two/", views.survey_two, name="survey_two"),
     path("content/<slug:slug>/", views.course_detail, name="content"),
     path('track_video_event/', views.track_video_event, name='track_video_event'),
+    path("video-one/", views.video_one, name="video_one"),
+    path("video-two/", views.video_two, name="video_two"),
+    path("video-three/", views.video_three, name="video_three"),
+
 
 ]
 

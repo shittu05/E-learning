@@ -52,6 +52,22 @@ def learning(request):
 def concept_map(request):
     return render(request, 'concept-map.html')
 
+def concept_map_two(request):
+    return render(request, 'concept-map2.html')
+
+def concept_map_three(request):
+    return render(request, 'concept-map3.html')
+
+@login_required
+def video_one(request):
+    return render(request, 'video1.html')
+
+def video_two(request):
+    return render(request, 'video2.html')
+
+@login_required
+def video_three(request):
+    return render(request, 'video3.html')
 
 @login_required
 def problem_to_solve(request):
@@ -79,7 +95,7 @@ def problem_to_solve(request):
 
         if existing:
             messages.error(request, 'You have already submitted this survey.')
-            return redirect('post_test')
+            return redirect('learning')
 
         # Create submission
         try:
@@ -88,8 +104,8 @@ def problem_to_solve(request):
                 user=request.user,
                 answers=answers
             )
-            messages.success(request, 'Survey submitted successfully!')
-            return redirect('post_test')  # Change to your actual post-test URL name
+            messages.success(request, 'Test one submitted successfully!')
+            return redirect('learning')  # Change to your actual post-test URL name
         except Exception as e:
             messages.error(request, f'Error submitting survey: {str(e)}')
             return render(request, 'problem-to-solve.html')
@@ -97,6 +113,93 @@ def problem_to_solve(request):
     # GET request - show the form
     return render(request, 'problem-to-solve.html')
 
+
+@login_required
+def problem_to_solve_two(request):
+    if request.method == 'POST':
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 11)
+        }
+
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+
+        if unanswered:
+            messages.error(
+                request, 
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve')
+
+        # Check for duplicate submission (optional)
+        existing = Submission.objects.filter(
+            user=request.user,
+            title='Problem to Solve two'
+        ).first()
+
+        if existing:
+            messages.error(request, 'Test two has already been submitted.')
+            return redirect('learning')
+
+        # Create submission
+        try:
+            submission = Submission.objects.create(
+                title='Problem to Solve Two',
+                user=request.user,
+                answers=answers
+            )
+            messages.success(request, 'Test two submitted successfully!')
+            return redirect('learning')  # Change to your actual post-test URL name
+        except Exception as e:
+            messages.error(request, f'Error submitting survey: {str(e)}')
+            return render(request, 'problem-to-solve-two.html')
+    
+    # GET request - show the form
+    return render(request, 'problem-to-solve-two.html')
+@login_required
+def problem_to_solve_three(request):
+    if request.method == 'POST':
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 11)
+        }
+
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+
+        if unanswered:
+            messages.error(
+                request, 
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve')
+
+        # Check for duplicate submission (optional)
+        existing = Submission.objects.filter(
+            user=request.user,
+            title='Problem to Solve Three'
+        ).first()
+
+        if existing:
+            messages.error(request, 'Test three has already been submitted.')
+            return redirect('learning')
+
+        # Create submission
+        try:
+            submission = Submission.objects.create(
+                title='Problem to Solve Three',
+                user=request.user,
+                answers=answers
+            )
+            messages.success(request, 'Test three submitted successfully!')
+            return redirect('learning')  # Change to your actual post-test URL name
+        except Exception as e:
+            messages.error(request, f'Error submitting survey: {str(e)}')
+            return render(request, 'problem-to-solve-three.html')
+    
+    # GET request - show the form
+    return render(request, 'problem-to-solve-three.html')
 
 @login_required
 def post_test(request):
@@ -147,7 +250,7 @@ def post_test(request):
         ).first()
         
         if existing:
-            messages.error(request, 'You have already submitted this post-test.')
+            messages.error(request, 'Post-test has already been submitted.')
             return redirect('survey_two')  
         
         # Create submission

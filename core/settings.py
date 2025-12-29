@@ -28,8 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(",")
+
 
 
 # Application definition
@@ -104,12 +103,46 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+
+# Configure the DATABASES setting based on the environment
+if ENVIRONMENT == "production":
+    # Fetch from environment and split by comma
+    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+    CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+    DATABASES = {
+        "default": {
+            "ENGINE": os.getenv("DB_ENGINE", default="django.db.backends.postgresql"),
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+            # "OPTIONS": {
+            #     "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            #     "charset": "utf8mb4",
+            # },
+        }
+    }
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]
+    
+    DATABASES = {
+
     'default': {
         'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
         'NAME': BASE_DIR / os.getenv('DATABASE_NAME', 'db.sqlite3'),
     }
 }
+
+
 
 
 # Password validation
@@ -180,6 +213,21 @@ DJANGO_EASY_AUDIT_CHECK_IF_REQUEST_USER_EXISTS = True
 DJANGO_EASY_AUDIT_REGISTERED_URLS = [
     r'^/learn/courses/',  # Existing registered URL
     r'^/learn/content/[a-zA-Z0-9-_]+/$',  # New pattern for course detail with a slug
+    r'^/learn/video/',
+    r'^/learn/survey/',
+    r'^/learn/learning/',
+    r'^/learn/concept-map/',
+    r'^/learn/problem-to-solve/',
+    r'^/learn/post-test/',
+    r'^/learn/survey-two/',
+    r'^/learn/video-one/',
+    r'^/learn/video-two/',
+    r'^/learn/video-three/',
+    r'^/learn/concept-map-two/',
+    r'^/learn/concept-map-three/',
+    r'^/learn/problem-to-solve-two/',
+    r'^/learn/problem-to-solve-three/',
+
 ]
 
 
