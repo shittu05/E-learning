@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# Exit on error
+# Exit immediately if a command exits with a non-zero status
 set -o errexit
 
-# Modify this line as needed for your package manager (pip, poetry, etc.)
+# Activate your virtual environment (optional if Render auto-activates)
+# source .venv/bin/activate
+
+echo "Installing dependencies..."
 pip install -r requirements.txt
 
-# Convert static asset files
-python manage.py collectstatic --no-input
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
 
-# Apply any outstanding database migrations
+echo "initializing database migrations..."
+python manage.py makemigrations --noinput
+
+echo "Applying all migrations..."
 python manage.py migrate --noinput
+
+echo "All tasks completed successfully!"
