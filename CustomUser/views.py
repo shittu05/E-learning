@@ -19,9 +19,13 @@ from django.contrib.auth.forms import AuthenticationForm
 # Create your models here.
 
 def index(request):
-    if request.user.is_authenticated:
-        return redirect("/learn/courses/")
+    try:
+        if request.user.is_authenticated:
+            return redirect("/learn/courses/")
+    except Exception:
+        pass
     return render(request, 'registration.html')
+
 
 
 
