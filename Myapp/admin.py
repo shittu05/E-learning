@@ -23,8 +23,8 @@ class CustomRequestEventAdmin(RequestEventAdmin, admin.ModelAdmin):
 # ✅ Register VideoEvent with Django's ModelAdmin
 @admin.register(VideoEvent)
 class VideoEventAdmin(admin.ModelAdmin):  
-    list_display = ('course', 'user', 'event_type', 'timestamp')  # Use 'course' directly
-    search_fields = ('event_type', 'course__title', 'user__email')  # Fix course lookup
+    list_display = ( 'course_title', 'user', 'event_type', 'timestamp')  # Use 'course' directly
+    search_fields = ('event_type', 'course_title','course__title', 'user__email')  # Fix course lookup
     list_filter = ('event_type', 'course')
     list_per_page = 10  
 

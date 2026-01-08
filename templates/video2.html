@@ -22,7 +22,7 @@
           <div class="card card-shadow p-4 p-md-5">
             <h2 class="h4 mb-3">Video 2 — Examples & Scenarios</h2>
             <div class="video-wrapper mb-3" style="border-radius:12px; overflow:hidden;">
-              <video controls class="w-100" aria-label="Video 2">
+              <video controls class="w-100" aria-label="Video 2"  data-video-name="video2">
                 <source src="{% static 'assets/videos/elearning.mp4' %}" type="video/mp4" />
                 Your browser does not support the video element.
               </video>
@@ -40,5 +40,98 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'assets/js/app.js' %}" defer></script>
+  <script>
+    // Function to get CSRF token for Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all video elements on the page
+        const videos = document.querySelectorAll('video');
+
+        console.log('Found', videos.length, 'video(s) on page');
+
+        // Attach event listeners to all video elements
+        videos.forEach(video => {
+            // Log when video is ready
+            video.addEventListener('loadedmetadata', function() {
+                console.log('Video loaded and ready:', video.currentSrc);
+            });
+
+            video.addEventListener('play', function() {
+                logVideoEvent(video, 'play');
+            });
+
+            video.addEventListener('pause', function() {
+                logVideoEvent(video, 'pause');
+            });
+
+            video.addEventListener('ended', function() {
+                logVideoEvent(video, 'ended');
+            });
+        });
+
+        // Function to log video event
+        function logVideoEvent(video, eventType) {
+            // Get video identifier - try multiple methods to get the actual source
+            const videoSrc = video.currentSrc || 
+                           (video.querySelector('source') ? video.querySelector('source').src : '') ||
+                           video.src ||
+                           'unknown';
+            
+            // Get the course information (these should match your backend expectations)
+            const courseTitle = 'Problem to Solve Two';
+            const courseId = '1';
+
+            const payload = {
+                video_id: videoSrc,
+                event_type: eventType,
+                timestamp: new Date().toISOString(),
+                course_id: courseId,
+                course_title: courseTitle
+            };
+
+            console.log('Sending video event to backend:', payload);
+
+            fetch('/learn/track_video_event/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ Video event tracked successfully:', data);
+            })
+            .catch(error => {
+                console.error('❌ Error tracking video event:', error);
+                console.error('Failed payload was:', payload);
+            });
+        }
+    });
+  </script>
 </body>
 </html>
