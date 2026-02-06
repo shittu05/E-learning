@@ -1,159 +1,461 @@
-/* Custom styles */
-
-.custom-card {
-  border-radius: 10px; /* Rounded corners */
-  padding: 20px; /* Increased padding inside the card */
-  height: 100%; /* Ensure cards take full height of their container */
-  transition: transform 0.3s, box-shadow 0.3s;
+:root {
+  --rd-primary: #2563eb;
+  --rd-primary-soft: #e0edff;
+  --rd-accent: #22c55e;
+  --rd-muted: #6b7280;
+  --rd-bg: #f5f7fb;
+  --rd-danger: #dc2626;
+  --rd-warning: #f97316;
+  --rd-radius-lg: 1.25rem;
+  --rd-radius-md: 0.75rem;
+  --rd-transition-fast: 150ms ease-out;
+  --rd-transition-med: 220ms ease-out;
 }
 
-.custom-card:hover {
-  transform: translateY(-5px); /* Slight lift on hover */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Space out content evenly */
-  height: 100%; /* Ensure card body takes full height */
-}
-
-.card-title {
-  font-size: 1.5rem; /* Larger title */
-  margin-bottom: 15px; /* Space below title */
-}
-
-.card-text {
-  font-size: 1rem; /* Adjust text size */
-  margin-bottom: 20px; /* Space below text */
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-  padding: 10px 20px; /* Increased button padding */
-  font-size: 1rem; /* Larger button text */
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
+html,
+body {
+  height: 100%;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background-color: var(--rd-bg);
 }
 
-/* Background image with overlay */
-.bg-image {
-  background-image: url("/static/assets/img/Bglogin.svg"); /* Replace with your image path */
-  background-size: cover;
-  background-position: center;
+/* Layout */
+
+.app-header {
+  cursor: pointer;
+}
+
+.app-header:hover {
+  background-color: rgba(241, 245, 249, 0.9);
+}
+
+.app-header,
+.app-footer {
+  background-color: #ffffff;
+  height: 48px;
+  Padding: 10px;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--rd-primary-soft);
+  color: var(--rd-primary);
+  font-size: 1.1rem;
+}
+
+.page-card {
+  border-radius: var(--rd-radius-lg);
+}
+
+/* Page transitions */
+
+.page-section {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--rd-transition-med),
+    transform var(--rd-transition-med);
+}
+
+.page-section.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Simple fade-in for inner content */
+
+.fade-in {
+  animation: fadeInUp 300ms ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Global alert */
+
+#globalAlert {
+  border-radius: var(--rd-radius-md);
+}
+
+/* Sign-up form */
+
+#signupForm .form-control {
+  transition:
+    box-shadow var(--rd-transition-fast),
+    border-color var(--rd-transition-fast);
+}
+
+#signupForm .form-control:focus {
+  box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.15);
+  border-color: var(--rd-primary);
+}
+
+/* Password strength bar colors */
+
+.password-weak {
+  background-color: var(--rd-danger) !important;
+}
+
+.password-medium {
+  background-color: var(--rd-warning) !important;
+}
+
+.password-strong {
+  background-color: var(--rd-accent) !important;
+}
+
+/* Survey */
+
+.char-counter {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--rd-muted);
+}
+
+.char-counter.warn {
+  color: var(--rd-warning);
+}
+
+.char-counter.error {
+  color: var(--rd-danger);
+}
+
+/* Transcript collapse override */
+
+.transcript .card {
+  border-radius: var(--rd-radius-md);
+}
+
+/* Concept map */
+
+.concept-map-container {
+  background: #ffffff;
+  border-radius: var(--rd-radius-md);
+  padding: 0.75rem 0.75rem 0.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.concept-map-viewport {
+  background: radial-gradient(circle at top, #eef2ff, #ffffff);
+  border-radius: var(--rd-radius-md);
+  overflow: hidden;
+  border: 1px dashed rgba(15, 23, 42, 0.1);
+  cursor: grab;
+  height: 320px;
   position: relative;
 }
 
-.bg-image::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
+.concept-map-viewport:active {
+  cursor: grabbing;
+}
+
+#conceptMapSvg {
   width: 100%;
   height: 100%;
-  background-color: rgba(
-    29,
-    81,
-    138,
-    0.858
-  ); /* Blue overlay with 70% opacity */
+  user-select: none;
 }
 
-.bg-image > * {
-  position: relative; /* Ensure content is above the overlay */
-  z-index: 1;
+/* Nodes */
+
+.concept-node circle {
+  fill: #ffffff;
+  stroke: var(--rd-primary);
+  stroke-width: 2;
+  transition:
+    transform var(--rd-transition-med),
+    fill var(--rd-transition-med),
+    stroke var(--rd-transition-med);
 }
 
-.card {
-  border: 1px solid #cccdd2;
-  border-radius: 10px;
+.concept-node text {
+  fill: #0f172a;
+  font-size: 13px;
+  text-anchor: middle;
+  dominant-baseline: middle;
 }
+
+.concept-node:hover circle {
+  transform: scale(1.05);
+  fill: var(--rd-primary-soft);
+}
+
+/* Edges */
+
+.concept-edge {
+  stroke: rgba(15, 23, 42, 0.35);
+  stroke-width: 1.5;
+}
+
+/* Concept detail card */
+
+.concept-detail-card {
+  border-radius: var(--rd-radius-md);
+}
+
+/* Hub tabs */
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 0.4rem;
+  transition:
+    color var(--rd-transition-fast),
+    border-color var(--rd-transition-fast),
+    background-color var(--rd-transition-fast);
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--rd-primary);
+  border-bottom-color: var(--rd-primary);
+  background-color: transparent;
+}
+
+/* Buttons */
 
 .btn-primary {
-  background-color: #007bff;
-  border: none;
+  background-color: var(--rd-primary);
+  border-color: var(--rd-primary);
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .col-md-6 {
-    height: 50vh; /* Split height on smaller screens */
+.btn-primary:active {
+  background-color: #1e40af !important;
+  border-color: #1e40af !important;
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+/* Footer text */
+
+#progressFooterText {
+  font-weight: 500;
+}
+
+/* Utilities */
+
+.d-none {
+  display: none !important;
+}
+
+/* Small screen tweaks */
+
+@media (max-width: 575.98px) {
+  .page-card {
+    border-radius: 1rem;
   }
 }
 
 
-.invalid-feedback {
-  display: block;
-  color: #dc3545; /* Red color for errors */
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.form-control.is-invalid {
-  border-color: #dc3545; /* Red border for invalid fields */
-  background-color: #f8d7da; /* Light red background for invalid fields */
-}
-
-
-.search-container {
-  background-color: white;
-  border-radius: 50px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  max-width: 500px;
+/* wide page with responsive constraints */
+.hub-outer {
   width: 100%;
-  transition: all 0.3s ease;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.hub-inner {
+  max-width: 1200px; /* wider max width for large screens */
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.search-container:hover {
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+/* Hero area */
+.learning-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
 }
 
-.form-control.search-input {
-  border: none;
-  background: transparent;
-  padding-left: 20px;
+/* Gradient, colorful H2 */
+.learning-hero h2 {
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.05;
+  background: linear-gradient(90deg, #1652b0 0%, #4fb0f7 45%, #8ee3c0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 4px 18px rgba(30, 95, 179, 0.10);
+}
+
+/* lighter subtitle with a longer divider line */
+.learning-hero h4 {
   font-size: 1rem;
-  height: 50px;
+  color: rgba(31, 41, 55, 0.65);
+  font-weight: 600;
+  margin: 0;
+  padding-bottom: 0.65rem;
+  position: relative;
 }
 
-.form-control.search-input:focus {
-  box-shadow: none;
-  outline: none;
-}
-
-.btn-search {
-  background-color: #007bff;
-  color: white;
-  border-radius: 50px;
-  padding: 10px 20px;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-search:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
-
-.search-icon {
-  color: #6c757d;
+/* Extend the straight line under the subtitle to ~90% width */
+.learning-hero h4::after {
+  content: "";
   position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 0;
+  right: 10%; /* previously 40% — now 10% for much longer line */
+  bottom: -0.6rem;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(30,95,179,0.12), rgba(30,95,179,0.06));
+  border-radius: 2px;
 }
+
+/* Cards container layout — keep roomy spacing */
+.learning-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .learning-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .learning-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card style & interactivity */
+.learning-card {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  box-shadow: 0 6px 18px rgba(24, 58, 110, 0.04);
+}
+
+.learning-card:hover,
+.learning-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 48px rgba(24, 58, 110, 0.10);
+}
+
+/* Card content */
+.learning-card .card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.learning-card .card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: #0f1724;
+}
+
+.learning-card .card-text {
+  font-size: 0.92rem;
+  color: rgba(15, 23, 42, 0.65);
+  margin: 0;
+  flex: 1;
+}
+
+/* footer area for button */
+.learning-card .card-footer {
+  padding: 0.9rem 1.25rem;
+  background: transparent;
+  border-top: 1px solid rgba(15, 23, 42, 0.03);
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.learning-card .icon-circle svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  fill: #ffffff;        /* white icons */
+  stroke: none;
+}
+
+
+.learning-card .icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#38bdf8 100%);
+  box-shadow: 0 6px 16px rgba(30,64,175,0.18), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+
+.learning-card .icon-circle svg {
+  margin: 0;
+}
+
+
+
+/* small "View" button */
+.btn-view {
+  min-width: 92px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* ensure full-card clickable link doesn't hide buttons */
+.learning-card a.card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+/* keep footer buttons visible above full-card link */
+.learning-card .card-footer .btn {
+  z-index: 2;
+}
+
+/* small aesthetic helpers */
+.section-note {
+  color: rgba(15, 23, 42, 0.55);
+  font-size: 0.9rem;
+}
+

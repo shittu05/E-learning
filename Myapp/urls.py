@@ -14,9 +14,11 @@ urlpatterns = [
     path("concept-map/", views.concept_map, name="concept_map"),
     path("concept-map-two/", views.concept_map_two, name="concept_map_two"),
     path("concept-map-three/", views.concept_map_three, name="concept_map_three"),
+    path("concept-map-four/", views.concept_map_four, name="concept_map_four"),
     path("problem-to-solve/", views.problem_to_solve, name="problem_to_solve"),
     path("problem-to-solve-two/", views.problem_to_solve_two, name="problem_to_solve_two"),
     path("problem-to-solve-three/", views.problem_to_solve_three, name="problem_to_solve_three"),
+    path("problem-to-solve-four/", views.problem_to_solve_four, name="problem_to_solve_four"),
     path("post-test/", views.post_test, name="post_test"),
     path("survey-two/", views.survey_two, name="survey_two"),
     path("content/<slug:slug>/", views.course_detail, name="content"),
@@ -24,6 +26,7 @@ urlpatterns = [
     path("video-one/", views.video_one, name="video_one"),
     path("video-two/", views.video_two, name="video_two"),
     path("video-three/", views.video_three, name="video_three"),
+    path("video-four/", views.video_four, name="video_four"),
 
 
 ]

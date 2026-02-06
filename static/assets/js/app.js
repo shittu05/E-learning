@@ -37,7 +37,7 @@ function initHeaderNavigation() {
     const tag = e.target.tagName.toLowerCase();
     if (tag === "a" || tag === "button") return;
 
-    window.location.href = "/learn/courses/";
+    window.location.href = "/learn/learning-hub/";
   });
 }
 
@@ -45,7 +45,7 @@ function initHeaderNavigation() {
 
 const PAGE_URLS = {
   signup: "index.html",
-  preDirections: "/learn/courses/",
+  preDirections: "/learn/learning-hub/",
   video: "video.html",
   survey: "survey.html",
   hub: "/learn/learning-hub/",

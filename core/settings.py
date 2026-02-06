@@ -14,6 +14,8 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 import dj_database_url
+import pymysql
+pymysql.install_as_MySQLdb()
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -114,11 +116,18 @@ if ENVIRONMENT == "production":
     CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
     DATABASES = {
-        "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
-            conn_max_age=600,
-            ssl_require=True,
-        )
+        "default": {
+            "ENGINE": os.getenv("DB_ENGINE", default="django.db.backends.mysql"),
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+            # "OPTIONS": {
+            #     "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            #     "charset": "utf8mb4",
+            # },
+        }
     }
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -174,17 +183,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Adjust based on your project structure
-]
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Only used in production
+
+# Static files settings
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),
+)
 
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -294,3 +302,5 @@ CKEDITOR_CONFIGS = {
 
 
 LOGIN_URL = 'login'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

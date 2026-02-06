@@ -13,21 +13,37 @@
   />
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}" />
   <link rel="stylesheet" href="/static/assets/src/css/iziToast.css">
-    <link rel="stylesheet" href="/static/assets/src/css/iziToast.min.css">
-    <script src="/static/assets/src/js/iziToast.js" type="text/javascript"></script>
-    <script src="/static/assets/src/js/iziToast.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="/static/assets/src/css/animations.styl">
+  <link rel="stylesheet" href="/static/assets/src/css/iziToast.min.css">
+  <script src="/static/assets/src/js/iziToast.js" type="text/javascript"></script>
+  <script src="/static/assets/src/js/iziToast.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="/static/assets/src/css/animations.styl">
+  <link rel="stylesheet" href="/static/assets/src/css/layouts.styl">
+  <link rel="stylesheet" href="/static/assets/src/css/style.styl">
+  <link rel="stylesheet" href="/static/assets/src/css/themes.styl">
+  <link rel="stylesheet" href="/static/assets/src/css/toast.styl">
 
-<link rel="stylesheet" href="/static/assets/src/css/layouts.styl">
-<link rel="stylesheet" href="/static/assets/src/css/style.styl">
-<link rel="stylesheet" href="/static/assets/src/css/themes.styl">
-
-<link rel="stylesheet" href="/static/assets/src/css/toast.styl">	
+  <style>
+    /* Extra highlight styles to make right/wrong answers more visible */
+    .answer-correct {
+      background-color: rgba(34, 197, 94, 0.12); /* soft green */
+      border-bottom: 2px solid rgba(22, 163, 74, 0.9);
+      border-radius: 4px;
+      padding: 2px 4px;
+      display: inline-block;
+    }
+    .answer-wrong {
+      background-color: rgba(239, 68, 68, 0.12); /* soft red */
+      border-bottom: 2px solid rgba(220, 38, 38, 0.9);
+      border-radius: 4px;
+      padding: 2px 4px;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body data-page="problem">
   <header class="app-header d-flex align-items-center justify-content-between">
-    <div class="app-logo">Research Study</div>
-    <small class="text-muted">Problem to Solve</small>
+    <div class="app-logo">Technology and Assessmenty</div>
+    
   </header>
 
   <main class="main-wrapper">
@@ -36,25 +52,21 @@
         <div class="col-xl-9 col-lg-10">
           <div class="card card-shadow p-4 p-md-5">
             <!-- Top nav -->
-            <nav class="mb-3">
-              <ul class="nav nav-pills learning-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="/learn/learning-hub">Learning Hub</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/learn/concept-map">Concept Map</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active" href="/learn/problem-to-solve">Problem to Solve</a>
-                </li>
-              </ul>
-            </nav>
+            
 
-            <h1 class="h4 mb-3">Problem to Solve – Applying the Concept Map</h1>
+            <h1 class="h4 mb-3">Quiz 1</h1>
             <p class="text-muted">
               Answer the following questions based on the concept map and video. Select the best
               option for each question.
             </p>
+
+            <!-- Feedback / score -->
+            <div
+              id="quizFeedback"
+              class="alert d-none"
+              role="alert"
+              aria-live="polite"
+            ></div>
 
             <div class="form-customer des-font">
             {% if messages %}
@@ -72,7 +84,7 @@
                   image = "{% static 'assets/img/check.png' %}"; // Corrected image path
                 
                 } else if (messageType === "info"){
-                  backgroundColor = "#65B1D0"; // Green color for success messages
+                  backgroundColor = "#65B1D0"; // Blue color for info messages
                   messageColor = "white";
       
                 } else {
@@ -81,53 +93,51 @@
                 }
           
                 iziToast.show({
-                  
                   message: '{{ message }}',
                   image : image,
                   position: 'topRight',
                   timeout: 5000,
                   transitionIn: 'bounceInUp',
                   transitionOut: 'flipOutX',
-                  backgroundColor: backgroundColor, // Set background color based on message type
-                  messageColor: messageColor, // Set message color
+                  backgroundColor: backgroundColor,
+                  messageColor: messageColor,
                   messageSize: '18',
-                  
                 });
               </script>
-                {% endfor %}
-              {% endif %}
-        </div>
+            {% endfor %}
+            {% endif %}
+            </div>
 
-            <form method ="post" action="/learn/problem-to-solve/">
+            <form id="quiz1Form" method="post" action="{% url 'problem_to_solve' %}">
               {% csrf_token %}
                
               <!-- Q1 -->
               <div class="mb-3">
                 <p class="mb-1">
-                  <strong>1.</strong> What is the central question of the concept map?
+                  <strong>1.</strong> Which statement best reflects why assessment is considered an ongoing process?
                 </p>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q1" id="q1a" value="A" />
                   <label class="form-check-label" for="q1a">
-                    A. How can teachers grade more efficiently?
+                    A. Because it only occurs after instruction is completed
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q1" id="q1b" value="B" />
                   <label class="form-check-label" for="q1b">
-                    B. Who is doing the thinking now?
+                    B. Because it is used exclusively for grading purposes
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q1" id="q1c" value="C" />
                   <label class="form-check-label" for="q1c">
-                    C. Should AI be used in every classroom?
+                    C. Because information about learning can be collected before, during, and after instruction
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q1" id="q1d" value="D" />
                   <label class="form-check-label" for="q1d">
-                    D. Are textbooks becoming obsolete?
+                    D. Because it relies mainly on formal tools such as exams
                   </label>
                 </div>
               </div>
@@ -135,31 +145,30 @@
               <!-- Q2 -->
               <div class="mb-3">
                 <p class="mb-1">
-                  <strong>2.</strong> Which of the following best describes a major change in
-                  classrooms over the past 15 years?
+                  <strong>2.</strong> Which type of information is most directly used to guide instructional decisions?
                 </p>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q2" id="q2a" value="A" />
                   <label class="form-check-label" for="q2a">
-                    A. Students use more handwritten notes
+                    A. Final grades assigned at the end of a course
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q2" id="q2b" value="B" />
                   <label class="form-check-label" for="q2b">
-                    B. Teachers rely less on group work
+                    B. Students' answers, error patterns, and misunderstandings
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q2" id="q2c" value="C" />
                   <label class="form-check-label" for="q2c">
-                    C. Shift from textbooks → Google → AI
+                    C. Official curriculum standards
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q2" id="q2d" value="D" />
                   <label class="form-check-label" for="q2d">
-                    D. Schools have removed all digital devices
+                    D. The number of assessments conducted
                   </label>
                 </div>
               </div>
@@ -167,30 +176,31 @@
               <!-- Q3 -->
               <div class="mb-3">
                 <p class="mb-1">
-                  <strong>3.</strong> Why does AI complicate the meaning of “knowing” something?
+                  <strong>3.</strong> A teacher uses students' responses during a lesson to modify explanations 
+                  and examples in real time. This practice reflects which relationship?
                 </p>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q3" id="q3a" value="A" />
                   <label class="form-check-label" for="q3a">
-                    A. AI prevents students from accessing information
+                    A. Assessment of learning → documents achievement
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q3" id="q3b" value="B" />
                   <label class="form-check-label" for="q3b">
-                    B. AI removes the need for teachers
+                    B. Assessment for learning → guides teaching
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q3" id="q3c" value="C" />
                   <label class="form-check-label" for="q3c">
-                    C. AI can produce correct answers without student understanding
+                    C. Assessment as learning → replaces instruction
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q3" id="q3d" value="D" />
                   <label class="form-check-label" for="q3d">
-                    D. AI makes memorization more important
+                    D. Formal assessment → records performance
                   </label>
                 </div>
               </div>
@@ -198,31 +208,31 @@
               <!-- Q4 -->
               <div class="mb-3">
                 <p class="mb-1">
-                  <strong>4.</strong> What is one consequence of tools processing information
-                  instead of students?
+                  <strong>4.</strong> Which pairing correctly matches an assessment type with its 
+                  defining characteristic?
                 </p>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q4" id="q4a" value="A" />
                   <label class="form-check-label" for="q4a">
-                    A. Students develop stronger reasoning skills
+                    A. Informal assessment → planned, graded, and recorded
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q4" id="q4b" value="B" />
                   <label class="form-check-label" for="q4b">
-                    B. Performance may look high while understanding stays low
+                    B. Formal assessment → based on observation and questioning only
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q4" id="q4c" value="C" />
                   <label class="form-check-label" for="q4c">
-                    C. Teachers spend less time planning
+                    C. Informal assessment → ongoing and observational
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q4" id="q4d" value="D" />
                   <label class="form-check-label" for="q4d">
-                    D. Group work becomes unnecessary
+                    D. Formal assessment → focused primarily on self-reflection
                   </label>
                 </div>
               </div>
@@ -230,202 +240,40 @@
               <!-- Q5 -->
               <div class="mb-3">
                 <p class="mb-1">
-                  <strong>5.</strong> Which of the following is an example of assisting thinking
-                  rather than replacing it?
+                  <strong>5.</strong> Which statement best captures the relationship between technology
+                   and assessment?
                 </p>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q5" id="q5a" value="A" />
                   <label class="form-check-label" for="q5a">
-                    A. AI writing an entire essay
+                    A. Technology fundamentally changes the purpose of assessment
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q5" id="q5b" value="B" />
                   <label class="form-check-label" for="q5b">
-                    B. AI providing a full argument structure
+                    B. Technology reduces the need for assessment during learning
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q5" id="q5c" value="C" />
                   <label class="form-check-label" for="q5c">
-                    C. AI generating brainstorming ideas
+                    C. Technology increases the frequency and speed of assessment without changing its purpose
                   </label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="q5" id="q5d" value="D" />
                   <label class="form-check-label" for="q5d">
-                    D. AI giving complete answers to homework
+                    D. Technology limits assessment to summative uses
                   </label>
                 </div>
               </div>
 
-              <!-- Q6 -->
-              <div class="mb-3">
-                <p class="mb-1">
-                  <strong>6.</strong> What does cognitive offloading refer to?
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q6" id="q6a" value="A" />
-                  <label class="form-check-label" for="q6a">
-                    A. Letting students take turns presenting
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q6" id="q6b" value="B" />
-                  <label class="form-check-label" for="q6b">
-                    B. Using tools to reduce mental effort
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q6" id="q6c" value="C" />
-                  <label class="form-check-label" for="q6c">
-                    C. Helping students memorize content
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q6" id="q6d" value="D" />
-                  <label class="form-check-label" for="q6d">
-                    D. Increasing cognitive load through harder tasks
-                  </label>
-                </div>
+              <div class="d-flex justify-content-between mt-3">
+                <a class="btn btn-outline-secondary" href="{% url 'learning' %}">Back to Learning Hub</a>
+                <button class="btn btn-primary" id="quiz1Submit" type="button">Submit</button>
               </div>
-
-              <!-- Q7 -->
-              <div class="mb-3">
-                <p class="mb-1">
-                  <strong>7.</strong> Which of the following describes invisible learning?
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q7" id="q7a" value="A" />
-                  <label class="form-check-label" for="q7a">
-                    A. Students engaging deeply but quietly
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q7" id="q7b" value="B" />
-                  <label class="form-check-label" for="q7b">
-                    B. Students using AI to produce polished work without real thinking
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q7" id="q7c" value="C" />
-                  <label class="form-check-label" for="q7c">
-                    C. Teachers hiding learning outcomes
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q7" id="q7d" value="D" />
-                  <label class="form-check-label" for="q7d">
-                    D. Students working offline in class
-                  </label>
-                </div>
-              </div>
-
-              <!-- Q8 -->
-              <div class="mb-3">
-                <p class="mb-1">
-                  <strong>8.</strong> What distinguishes active learning from passive learning?
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q8" id="q8a" value="A" />
-                  <label class="form-check-label" for="q8a">
-                    A. Active learning uses digital tools
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q8" id="q8b" value="B" />
-                  <label class="form-check-label" for="q8b">
-                    B. Active learning relies on lectures
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q8" id="q8c" value="C" />
-                  <label class="form-check-label" for="q8c">
-                    C. Active learning involves generating and reasoning
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q8" id="q8d" value="D" />
-                  <label class="form-check-label" for="q8d">
-                    D. Passive learning requires more effort
-                  </label>
-                </div>
-              </div>
-
-              <!-- Q9 -->
-              <div class="mb-3">
-                <p class="mb-1">
-                  <strong>9.</strong> What is one of the teacher’s main responsibilities in the AI era?
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q9" id="q9a" value="A" />
-                  <label class="form-check-label" for="q9a">
-                    A. Remove technology from lessons
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q9" id="q9b" value="B" />
-                  <label class="form-check-label" for="q9b">
-                    B. Ensure technology replaces student thinking
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q9" id="q9c" value="C" />
-                  <label class="form-check-label" for="q9c">
-                    C. Protect and design student thinking processes
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q9" id="q9d" value="D" />
-                  <label class="form-check-label" for="q9d">
-                    D. Allow AI to provide all explanations
-                  </label>
-                </div>
-              </div>
-
-              <!-- Q10 -->
-              <div class="mb-3">
-                <p class="mb-1">
-                  <strong>10.</strong> Why can invisible learning be harmful?
-                </p>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q10" id="q10a" value="A" />
-                  <label class="form-check-label" for="q10a">
-                    A. It increases teacher workload
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q10" id="q10b" value="B" />
-                  <label class="form-check-label" for="q10b">
-                    B. It hides whether students actually engaged cognitively
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q10" id="q10c" value="C" />
-                  <label class="form-check-label" for="q10c">
-                    C. It requires too many digital tools
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q10" id="q10d" value="D" />
-                  <label class="form-check-label" for="q10d">
-                    D. It reduces the amount of AI available
-                  </label>
-                </div>
-              </div>
-              <div class="d-flex justify-content-end mt-3">
-              <button
-                type="submit"
-                class="btn btn-primary"
-              >
-                Submit
-              </button>
-            </div>
             </form>
-
-         <div class="d-flex justify-content-between mt-3">
-              <a class="btn btn-outline-secondary" href="{% url 'learning' %}">Back to Learning Hub</a>
-            </div>
 
           </div>
         </div>
@@ -435,5 +283,136 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'assets/js/app.js' %}" defer></script>
+
+  <!-- Quiz checking + Continue logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const answerKey = {
+        q1: "C",
+        q2: "B",
+        q3: "B",
+        q4: "C",
+        q5: "C"
+      };
+
+      const submitBtn = document.getElementById("quiz1Submit");
+      const feedbackEl = document.getElementById("quizFeedback");
+      const form = document.getElementById("quiz1Form");
+
+      let mode = "submit"; // "submit" or "retry"
+      let userScore = 0;
+      let totalQuestions = Object.keys(answerKey).length;
+      let formSubmitted = false; // Track if form was already submitted to backend
+
+      submitBtn.addEventListener("click", function () {
+        if (mode === "retry") {
+          // Submit the form to backend if not already submitted
+          if (!formSubmitted) {
+            formSubmitted = true;
+            form.submit();
+          }
+          return;
+        }
+
+        // --- SUBMIT MODE ---
+        feedbackEl.classList.add("d-none");
+        feedbackEl.classList.remove("alert-danger", "alert-success", "alert-info");
+        feedbackEl.textContent = "";
+
+        let correctCount = 0;
+        let unanswered = 0;
+
+        // Reset previous highlight classes
+        Object.keys(answerKey).forEach((qKey) => {
+          const options = document.querySelectorAll('input[name="' + qKey + '"]');
+          options.forEach((opt) => {
+            const label = document.querySelector('label[for="' + opt.id + '"]');
+            if (label) {
+              label.classList.remove(
+                "text-success",
+                "text-danger",
+                "fw-semibold",
+                "answer-correct",
+                "answer-wrong"
+              );
+            }
+          });
+        });
+
+        // Evaluate each question
+        Object.keys(answerKey).forEach((qKey) => {
+          const options = document.querySelectorAll('input[name="' + qKey + '"]');
+          const correctVal = answerKey[qKey];
+
+          let selected = null;
+          options.forEach((opt) => {
+            if (opt.checked) selected = opt;
+          });
+
+          if (!selected) {
+            unanswered++;
+            return;
+          }
+
+          const correctOpt = Array.from(options).find(
+            (opt) => opt.value === correctVal
+          );
+
+          const selectedLabel = document.querySelector(
+            'label[for="' + selected.id + '"]'
+          );
+          const correctLabel = correctOpt
+            ? document.querySelector('label[for="' + correctOpt.id + '"]')
+            : null;
+
+          if (selected.value === correctVal) {
+            correctCount++;
+            if (selectedLabel) {
+              selectedLabel.classList.add("text-success", "fw-semibold", "answer-correct");
+            }
+          } else {
+            if (selectedLabel) {
+              selectedLabel.classList.add("text-danger", "fw-semibold", "answer-wrong");
+            }
+            if (correctLabel) {
+              correctLabel.classList.add("text-success", "fw-semibold", "answer-correct");
+            }
+          }
+        });
+
+        if (unanswered > 0) {
+          feedbackEl.textContent =
+            "Please answer all questions before submitting. You have " +
+            unanswered +
+            " unanswered.";
+          feedbackEl.classList.add("alert-danger");
+          feedbackEl.classList.remove("d-none");
+          return;
+        }
+
+        // Store score
+        userScore = correctCount;
+
+        // Show score
+        feedbackEl.textContent =
+          "You answered " + correctCount + " out of " + totalQuestions + " questions correctly.";
+        feedbackEl.classList.add("alert-info");
+        feedbackEl.classList.remove("d-none");
+
+        // Prevent further interaction visually (but keep inputs enabled for form submission)
+        Object.keys(answerKey).forEach((qKey) => {
+          const options = document.querySelectorAll('input[name="' + qKey + '"]');
+          options.forEach((opt) => {
+            opt.style.pointerEvents = 'none';
+            opt.parentElement.style.opacity = '0.7';
+          });
+        });
+
+        // Switch to retry mode
+        mode = "retry";
+        submitBtn.textContent = "Try Again";
+      });
+    });
+  </script>
 </body>
 </html>

@@ -22,15 +22,32 @@ class Course(models.Model):
         return self.title
 
 
-class VideoEvent(models.Model):  # Use EasyAudit instead of AuditModel
+class VideoEvent(models.Model):
+    EVENT_TYPES = [
+        ('play', 'Play'),
+        ('pause', 'Pause'),
+        ('ended', 'Ended'),
+        ('watch_duration', 'Watch Duration'),
+        ('rewatch', 'Rewatch'),
+        ('seek_forward', 'Seek Forward'),
+        ('playback_speed', 'Playback Speed'),
+    ]
+    
     video_id = models.CharField(max_length=255)  # ID of the video
-    event_type = models.CharField(max_length=50)  # 'play', 'pause', 'ended'
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPES)  # Event type
     timestamp = models.DateTimeField(auto_now_add=True)  # When the event occurred
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Optionally track the user
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Track the user
     course = models.ForeignKey('Course', on_delete=models.SET_NULL, null=True, blank=True)  # Link to the course
-    course_title = models.CharField(max_length=255, null=True, blank=True)  # Store the course title in the event
-
-
+    course_title = models.CharField(max_length=255, null=True, blank=True)  # Course title
+    video_timestamp = models.FloatField(null=True, blank=True)  # Position in video (seconds)
+    
+    class Meta:
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['user', 'video_id', '-timestamp']),
+            models.Index(fields=['event_type', '-timestamp']),
+        ]
+    
 
     def __str__(self):
         return f"{self.event_type} event for video {self.video_id} in course {self.course_title}"
