@@ -1,4 +1,6 @@
 // app.js
+
+console.log("app.js loaded");
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.body.dataset.page || null;
   initProgressPersistence(page);
@@ -527,3 +529,29 @@ function initHubPage() {
     });
   }
 }
+
+
+
+
+// Page time tracking
+
+let pageStartTime = Date.now();
+
+
+window.addEventListener("beforeunload", function () {
+
+    let seconds = Math.floor(
+        (Date.now() - pageStartTime) / 1000
+    );
+
+
+    navigator.sendBeacon(
+        "/learn/track-time/",
+        JSON.stringify({
+            path: window.location.pathname,
+            seconds: seconds
+        })
+    );
+
+});
+

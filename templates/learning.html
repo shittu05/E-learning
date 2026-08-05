@@ -42,10 +42,52 @@
             <div class="section-note">Choose one of the materials below to study. Each card opens the corresponding resource.</div>
           </div>
 
+          <div class="form-customer des-font">
+            {% if messages %}
+            {% for message in messages %}
+              <script>
+                var messageType = "{{ message.tags }}";
+                var backgroundColor, image, messageColor; 
+                if (messageType === "error") {
+                  backgroundColor = "#ff0000"; // Red color for error messages
+                  messageColor = "white"; // White color for message text
+                  image = "{% static 'assets/img/error.png' %}"; // Corrected image path
+                } else if (messageType === "success") {
+                  backgroundColor = "#4CAF50"; // Green color for success messages
+                  messageColor = "white"; // White color for message text
+                  image = "{% static 'assets/img/check.png' %}"; // Corrected image path
+                
+                } else if (messageType === "info"){
+                  backgroundColor = "#65B1D0"; // Green color for success messages
+                  messageColor = "white";
+      
+                } else {
+                  backgroundColor = "#000000"; // Default color
+                  messageColor = "black"; // Black color for message text
+                }
+          
+                iziToast.show({
+                  
+                  message: '{{ message }}',
+                  image : image,
+                  position: 'topRight',
+                  timeout: 5000,
+                  transitionIn: 'bounceInUp',
+                  transitionOut: 'flipOutX',
+                  backgroundColor: backgroundColor, // Set background color based on message type
+                  messageColor: messageColor, // Set message color
+                  messageSize: '18',
+                  
+                });
+              </script>
+                {% endfor %}
+              {% endif %}
+        </div>
+
           <div class="learning-cards mt-3">
             <!-- Video 1 -->
             <div class="learning-card position-relative" tabindex="0" role="group" aria-label="Video 1 card">
-              <a class="card-link" href="video1.html" aria-label="Open Video 1"></a>
+              <a class="card-link" href="{% url 'video_one' %}" aria-label="Open Video 1"></a>
               <div class="card-body">
                 <div class="me-3">
                   <div class="icon-circle" aria-hidden="true">
@@ -70,7 +112,7 @@
 
             <!-- Concept Map 1 -->
             <div class="learning-card position-relative" tabindex="0" role="group" aria-label="Concept Map 1 card">
-              <a class="card-link" href="concept-map.html" aria-label="Open Concept Map 1"></a>
+              <a class="card-link" href="{% url 'concept_map' %}" aria-label="Open Concept Map 1"></a>
               <div class="card-body">
                 <div class="me-3">
                   <div class="icon-circle" aria-hidden="true">

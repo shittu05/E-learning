@@ -21,8 +21,8 @@
           <div class="card card-shadow p-4 p-md-5">
             <h2 class="h4 mb-3">Formative Assessment</h2>
             <div class="video-wrapper mb-3" style="border-radius:12px; overflow:hidden;">
-              <video controls class="w-100" aria-label="Video 2"  data-video-name="video2">
-                <source src="{% static 'assets/videos/video 2.mp4' %}" type="video/mp4" />
+              <video controls class="w-100" aria-label="Video 2"  data-video-name="video1">
+                <source src="{% static 'assets/videos/video1.mp4' %}" type="video/mp4" />
                 Your browser does not support the video element.
               </video>
             </div>
@@ -39,7 +39,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'assets/js/app.js' %}" defer></script>
   <script>
-    // Function to get CSRF token for Django
+      // Track video start time
+      let videoStartTime = 0;
+      let totalWatchDuration = 0;
+
+      // Function to get CSRF token
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -70,28 +74,37 @@
             });
 
             video.addEventListener('play', function() {
+                videoStartTime = new Date().getTime();
                 logVideoEvent(video, 'play');
             });
 
             video.addEventListener('pause', function() {
-                logVideoEvent(video, 'pause');
+                if (videoStartTime > 0) {
+                    const watchedSeconds = Math.round((new Date().getTime() - videoStartTime) / 1000);
+                    totalWatchDuration += watchedSeconds;
+                    logVideoEvent(video, 'pause', totalWatchDuration);
+                }
             });
 
             video.addEventListener('ended', function() {
-                logVideoEvent(video, 'ended');
+                if (videoStartTime > 0) {
+                    const watchedSeconds = Math.round((new Date().getTime() - videoStartTime) / 1000);
+                    totalWatchDuration += watchedSeconds;
+                    logVideoEvent(video, 'ended', totalWatchDuration);
+                }
             });
         });
 
         // Function to log video event
-        function logVideoEvent(video, eventType) {
+        function logVideoEvent(video, eventType, watchDuration = null) {
             // Get video identifier - try multiple methods to get the actual source
             const videoSrc = video.currentSrc || 
                            (video.querySelector('source') ? video.querySelector('source').src : '') ||
                            video.src ||
                            'unknown';
-            
+
             // Get the course information (these should match your backend expectations)
-            const courseTitle = 'Problem to Solve Two';
+            const courseTitle = 'Problem to Solve One';
             const courseId = '1';
 
             const payload = {
@@ -99,7 +112,8 @@
                 event_type: eventType,
                 timestamp: new Date().toISOString(),
                 course_id: courseId,
-                course_title: courseTitle
+                course_title: courseTitle,
+                watch_duration: watchDuration
             };
 
             console.log('Sending video event to backend:', payload);

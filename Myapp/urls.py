@@ -27,7 +27,13 @@ urlpatterns = [
     path("video-two/", views.video_two, name="video_two"),
     path("video-three/", views.video_three, name="video_three"),
     path("video-four/", views.video_four, name="video_four"),
+    path(
+    "track-time/",
+    views.track_time,
+    name="track_time"
+),
 
+ 
 
 ]
 

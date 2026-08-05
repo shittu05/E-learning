@@ -32,7 +32,7 @@ class VideoEvent(models.Model):
         ('seek_forward', 'Seek Forward'),
         ('playback_speed', 'Playback Speed'),
     ]
-    
+
     video_id = models.CharField(max_length=255)  # ID of the video
     event_type = models.CharField(max_length=50, choices=EVENT_TYPES)  # Event type
     timestamp = models.DateTimeField(auto_now_add=True)  # When the event occurred
@@ -40,6 +40,7 @@ class VideoEvent(models.Model):
     course = models.ForeignKey('Course', on_delete=models.SET_NULL, null=True, blank=True)  # Link to the course
     course_title = models.CharField(max_length=255, null=True, blank=True)  # Course title
     video_timestamp = models.FloatField(null=True, blank=True)  # Position in video (seconds)
+    watch_duration = models.FloatField(null=True, blank=True)  # Duration watched in seconds
     
     class Meta:
         ordering = ['-timestamp']
@@ -56,8 +57,66 @@ class VideoEvent(models.Model):
 class Submission(models.Model):
     title = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    answers = models.JSONField()  # Store answers as JSON
+    answers = models.JSONField()           # Store answers as JSON
     submitted_at = models.DateTimeField(auto_now_add=True)
+    retries = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"Submission by {self.user} for {self.title}"
+        return f"Submission by {self.user} for {self.title} (Attempt #{self.retries})"
+
+
+class PageTime(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    path = models.CharField(
+        max_length=500
+    )
+
+    seconds = models.PositiveIntegerField(
+        default=0
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+        return f"{self.path} - {self.seconds}s"
+
+
+
+
+class PageTimes(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    path = models.CharField(
+        max_length=500
+    )
+
+    seconds = models.PositiveIntegerField(
+        default=0
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    def __str__(self):
+        return f"{self.path} - {self.seconds}s"
+
+    class Meta:
+        verbose_name = "Page Time"
+        verbose_name_plural = "Page Times"
+        

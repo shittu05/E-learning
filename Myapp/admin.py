@@ -4,6 +4,7 @@ from easyaudit.models import RequestEvent
 from easyaudit.admin import RequestEventAdmin
 import csv
 from django.http import HttpResponse
+from .models import PageTimes
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):  
@@ -58,4 +59,33 @@ class VideoEventAdmin(admin.ModelAdmin):
 class SubmissionAdmin(admin.ModelAdmin):  
     list_display = ('title', 'user', 'submitted_at')
     search_fields = ('title', 'user__email')
+    list_per_page = 30
+
+
+
+@admin.register(PageTimes)
+class PageTimeAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "user",
+        "path",
+        "seconds",
+        "created_at"
+    )
+
+    search_fields = (
+        "path",
+        "user__email"
+    )
+    readonly_fields = (
+        "user",
+        "path",
+        "seconds",
+        "created_at"
+    )
+
+    list_filter = (
+        "created_at",
+    )
+
     list_per_page = 30

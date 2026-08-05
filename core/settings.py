@@ -95,6 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -225,10 +226,13 @@ DJANGO_EASY_AUDIT_REGISTERED_URLS = [
     r'^/learn/video-one/',
     r'^/learn/video-two/',
     r'^/learn/video-three/',
+    r'^/learn/video-four/',
     r'^/learn/concept-map-two/',
     r'^/learn/concept-map-three/',
+    r'^/learn/concept-map-four/',
     r'^/learn/problem-to-solve-two/',
     r'^/learn/problem-to-solve-three/',
+    r'^/learn/problem-to-solve-four/',
 
 ]
 

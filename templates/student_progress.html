@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Learning Progress{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">📚 My Learning Progress</h1>
+
+      <!-- Progress Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <div class="h5 text-muted">Videos Watched</div>
+              <div class="h2 font-weight-bold text-primary">{{ total_videos }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <div class="h5 text-muted">Completed</div>
+              <div class="h2 font-weight-bold text-success">{{ completed_videos }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <div class="h5 text-muted">Total Time</div>
+              <div class="h2 font-weight-bold text-info">{{ total_watched_minutes }}m</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <div class="h5 text-muted">Avg Completion</div>
+              <div class="h2 font-weight-bold text-warning">{{ avg_completion_percentage }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Progress Bar -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Overall Progress</h6>
+            <span class="badge bg-primary">{{ avg_completion_percentage }}%</span>
+          </div>
+          <div class="progress" style="height: 25px;">
+            <div class="progress-bar bg-gradient-info" role="progressbar" 
+                 style="width: {{ avg_completion_percentage }}%; transition: width 0.6s ease;"
+                 aria-valuenow="{{ avg_completion_percentage }}" aria-valuemin="0" aria-valuemax="100">
+              {{ avg_completion_percentage }}%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual Video Progress -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">Video Progress Details</h6>
+        </div>
+        <div class="card-body">
+          {% if user_progress %}
+            <div class="row">
+              {% for progress in user_progress %}
+              <div class="col-md-6 mb-4">
+                <div class="card border">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <div>
+                        <h6 class="card-title mb-1">{{ progress.course_title }}</h6>
+                        <small class="text-muted">Last accessed: {{ progress.last_accessed|date:"M d, Y g:i A" }}</small>
+                      </div>
+                      <div>
+                        {% if progress.is_completed %}
+                          <span class="badge bg-success">✓ Completed</span>
+                        {% else %}
+                          <span class="badge bg-warning">In Progress</span>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <!-- Video URL -->
+                    <small class="d-block text-monospace text-muted mb-3">
+                      {{ progress.video_id|truncatechars:60 }}
+                    </small>
+
+                    <!-- Stats -->
+                    <div class="row text-center mb-3">
+                      <div class="col-6">
+                        <div class="text-muted" style="font-size: 0.8rem;">Watched</div>
+                        <div class="h6">{{ progress.watched_duration|floatformat:0 }} sec</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="text-muted" style="font-size: 0.8rem;">Completion</div>
+                        <div class="h6">{{ progress.completion_percentage|floatformat:1 }}%</div>
+                      </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress" style="height: 20px;">
+                      <div class="progress-bar {% if progress.is_completed %}bg-success{% else %}bg-info{% endif %}" 
+                           role="progressbar" 
+                           style="width: {{ progress.completion_percentage }}%; transition: width 0.6s ease;"
+                           aria-valuenow="{{ progress.completion_percentage }}" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                        {% if progress.completion_percentage > 10 %}
+                          {{ progress.completion_percentage|floatformat:0 }}%
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <!-- Completion Message -->
+                    <small class="d-block mt-2 text-muted">
+                      {% if progress.is_completed %}
+                        🎉 Great job! You've completed this video.
+                      {% else %}
+                        {% with remaining=100|add:"-progress.completion_percentage|floatformat:1" %}
+                          {{ remaining }}% remaining to complete
+                        {% endwith %}
+                      {% endif %}
+                    </small>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- No Incomplete Videos Message -->
+            {% if completed_videos == total_videos and total_videos > 0 %}
+            <div class="alert alert-success alert-dismissible fade show mt-3">
+              <strong>🏆 Congratulations!</strong> You have completed all videos!
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+          {% else %}
+            <div class="alert alert-info">
+              <strong>No videos started yet.</strong> Visit the <a href="{% url 'learning' %}">Learning Hub</a> to get started!
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <div class="mt-4">
+        <a href="{% url 'learning' %}" class="btn btn-secondary">
+          ← Back to Learning Hub
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .text-monospace {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+  }
+
+  .bg-gradient-info {
+    background: linear-gradient(90deg, #36b9cc 0%, #1cc88a 100%) !important;
+  }
+
+  .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+  }
+</style>
+{% endblock %}

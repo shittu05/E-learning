@@ -1,0 +1,142 @@
+﻿#!/usr/bin/env python
+import os
+
+video_config = [
+    {'num': 1, 'title': 'Video 1', 'course': 'Problem to Solve One', 'source': 'assets/videos/Video1.mp4'},
+    {'num': 2, 'title': 'Video 2', 'course': 'Problem to Solve Two', 'source': 'assets/videos/video2.mp4'},
+    {'num': 3, 'title': 'Video 3', 'course': 'Problem to Solve Three', 'source': 'assets/videos/Video3.mp4'},
+    {'num': 4, 'title': 'Video 4', 'course': 'Problem to Solve Four', 'source': 'assets/videos/video4.mp4'},
+]
+
+template = '''{{load}} static
+{{load}} widget_tweaks
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{title}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{static 'assets/css/styles.css'}}" />
+</head>
+
+<body data-page="video{num}">
+  <header class="app-header d-flex align-items-center justify-content-between">
+    <div class="app-logo">Technology and Assessment</div>
+  </header>
+
+  <main class="main-wrapper">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card card-shadow p-4 p-md-5">
+            <h2 class="h4 mb-3">{title}</h2>
+            <div style="border-radius:12px; overflow:hidden;">
+              <video id="mainVideo" controls class="w-100" preload="metadata" playsinline>
+                <source src="{{static '{source}'}}" type="video/mp4" />
+              </video>
+            </div>
+            <p class="text-muted mt-3">Educational content video.</p>
+            <div class="d-flex justify-content-between mt-3">
+              <a class="btn btn-outline-secondary" href="{{url 'learning'}}">Back to Learning Hub</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{static 'assets/js/app.js'}}" defer></script>
+  <script>
+    function getCookie(name) {{
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {{
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {{
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {{
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }}
+        }}
+      }}
+      return cookieValue;
+    }}
+
+    let playStartTime = 0;
+    let totalWatchedTime = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {{
+      const video = document.getElementById('mainVideo');
+
+      function trackEvent(eventType, duration = null) {{
+        const videoSrc = video.currentSrc || (video.querySelector('source') ? video.querySelector('source').src : 'unknown');
+
+        const payload = {{
+          video_id: videoSrc,
+          event_type: eventType,
+          timestamp: new Date().toISOString(),
+          course_id: '1',
+          course_title: '{course}',
+          watch_duration: duration
+        }};
+
+        console.log('Event tracked:', eventType, 'Duration:', duration);
+
+        fetch('/learn/track_video_event/', {{
+          method: 'POST',
+          headers: {{
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          }},
+          body: JSON.stringify(payload)
+        }})
+        .then(r => r.json())
+        .then(data => console.log('Success:', data))
+        .catch(err => console.error('Error:', err));
+      }}
+
+      video.addEventListener('play', () => {{
+        playStartTime = Date.now();
+        trackEvent('play');
+      }});
+
+      video.addEventListener('pause', () => {{
+        if (playStartTime > 0) {{
+          const sessionDuration = Math.round((Date.now() - playStartTime) / 1000);
+          totalWatchedTime += sessionDuration;
+          console.log('Total watched:', totalWatchedTime + 's');
+          trackEvent('pause', totalWatchedTime);
+          playStartTime = 0;
+        }}
+      }});
+
+      video.addEventListener('ended', () => {{
+        if (playStartTime > 0) {{
+          const sessionDuration = Math.round((Date.now() - playStartTime) / 1000);
+          totalWatchedTime += sessionDuration;
+          trackEvent('ended', totalWatchedTime);
+          playStartTime = 0;
+        }}
+      }});
+    }});
+  </script>
+</body>
+</html>
+'''.replace('{{', '{').replace('}}', '}').replace('{load}', '{% load').replace('{static', '{% static').replace('{url', '{% url').replace('}\\'', ' %}')
+
+templates_dir = 'templates'
+for video in video_config:
+    filename = os.path.join(templates_dir, f"video{video['num']}.html")
+    content = template.format(
+        num=video['num'],
+        title=video['title'],
+        course=video['course'],
+        source=video['source']
+    )
+    with open(filename, 'w') as f:
+        f.write(content)
+    print(f'Created {filename}')
+
+print('All video templates created successfully!')

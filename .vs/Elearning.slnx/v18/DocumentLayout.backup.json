@@ -1,0 +1,69 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ASOTELE 02-1311.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:media\\ASOTELE 02-1311.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Gabriel\\Work\\django\\Elearning\\Myapp\\models.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Myapp\\models.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ASOTELE 02-1311.jpg -  [English (United Kingdom)] - Bitmap [4205x2628, 24 bit, JPG]",
+              "DocumentMoniker": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ASOTELE 02-1311.jpg",
+              "RelativeDocumentMoniker": "media\\ASOTELE 02-1311.jpg",
+              "ToolTip": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ASOTELE 02-1311.jpg -  [English (United Kingdom)] - Bitmap [4205x2628, 24 bit, JPG]",
+              "RelativeToolTip": "media\\ASOTELE 02-1311.jpg -  [English (United Kingdom)] - Bitmap [4205x2628, 24 bit, JPG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-08-03T19:08:56.047Z",
+              "EditorCaption": " -  [English (United Kingdom)] - Bitmap [4205x2628, 24 bit, JPG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg -  [English (United Kingdom)] - Bitmap [1598x1030, 24 bit, JPG]",
+              "DocumentMoniker": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg",
+              "RelativeDocumentMoniker": "media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg",
+              "ToolTip": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg -  [English (United Kingdom)] - Bitmap [1598x1030, 24 bit, JPG]",
+              "RelativeToolTip": "media\\ac6669e0-9c7e-11ef-bffb-b5cce5d36e6a.jpg -  [English (United Kingdom)] - Bitmap [1598x1030, 24 bit, JPG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-08-03T19:08:50.015Z",
+              "EditorCaption": " -  [English (United Kingdom)] - Bitmap [1598x1030, 24 bit, JPG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "models.py",
+              "DocumentMoniker": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\Myapp\\models.py",
+              "RelativeDocumentMoniker": "Myapp\\models.py",
+              "ToolTip": "C:\\Users\\Gabriel\\Work\\django\\Elearning\\Myapp\\models.py",
+              "RelativeToolTip": "Myapp\\models.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-08-03T19:07:41.521Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

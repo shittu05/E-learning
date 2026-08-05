@@ -1,0 +1,537 @@
+﻿from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from .models import Course, Submission
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from .filters import CourseFilter
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import VideoEvent
+import json
+from django.contrib.auth.decorators import login_required
+
+
+
+
+def courses(request):
+    return render(request, 'pre-directions.html')
+
+def video(request):
+    return render(request, 'video.html')
+
+@login_required
+def survey(request):
+    if request.method == 'POST':
+        title = 'Survey One'
+        user = request.user
+
+        answers = {
+            'survey1': request.POST.get('survey1', '').strip()
+        }
+
+        # Check if answered
+        if not answers['survey1']:
+            messages.error(request, 'Please fill in all fields.')
+            return redirect('survey')
+
+        #  Count previous attempts and set retry number
+        attempt_number = Submission.objects.filter(
+            user=user,
+            title=title
+        ).count() + 1
+
+        try:
+            Submission.objects.create(
+                title=title,
+                user=user,
+                answers=answers,
+                retries=attempt_number 
+            )
+            messages.success(
+                request,
+                f'Survey submitted successfully! (Attempt #{attempt_number})'
+            )
+            return redirect('learning')
+        except Exception as e:
+            messages.error(request, f'Error submitting survey: {str(e)}')
+            return render(request, 'survey.html')
+
+    return render(request, 'survey.html')
+
+
+def learning(request):
+    return render(request, 'learning.html')
+
+def concept_map(request):
+    return render(request, 'concept-map.html')
+
+def concept_map_two(request):
+    return render(request, 'concept-map2.html')
+
+def concept_map_three(request):
+    return render(request, 'concept-map3.html')
+
+def concept_map_four(request):
+    return render(request, 'concept-map4.html')
+
+@login_required
+def video_one(request):
+    return render(request, 'video1.html')
+
+def video_two(request):
+    return render(request, 'video2.html')
+
+@login_required
+def video_three(request):
+    return render(request, 'video3.html')
+
+@login_required
+def video_four(request):
+    return render(request, 'video4.html')
+
+
+def get_attempt_number(user, title):
+    return Submission.objects.filter(user=user, title=title).count() + 1
+
+
+
+@login_required
+def problem_to_solve(request):
+    if request.method == 'POST':
+        correct_answers = {
+            'q1': 'C',
+            'q2': 'B',
+            'q3': 'B',
+            'q4': 'C',
+            'q5': 'C'
+        }
+
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 6)
+        }
+
+        unanswered = [k for k, v in answers.items() if not v]
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve')
+
+        user_answers = {f'q{i}': request.POST.get(f'q{i}', '').strip() for i in range(1, 6)}
+        correct_count = sum(1 for q, ans in user_answers.items() if ans == correct_answers.get(q))
+        total_questions = len(correct_answers)
+
+        #  Count previous attempts
+        attempt_number = get_attempt_number(request.user, 'Video One')
+
+        try:
+            Submission.objects.create(
+                title='Video One',
+                user=request.user,
+                answers=answers,
+                retries=attempt_number
+            )
+            messages.success(
+                request,
+                f'Quiz submitted! Attempt #{attempt_number}. You scored {correct_count}/{total_questions}.'
+            )
+            return redirect('problem_to_solve')
+        except Exception as e:
+            messages.error(request, f'Error submitting quiz: {str(e)}')
+            return render(request, 'problem-to-solve.html')
+
+    return render(request, 'problem-to-solve.html')
+
+@login_required
+def problem_to_solve_two(request):
+    if request.method == 'POST':
+        correct_answers = {
+            'q1': 'C',
+            'q2': 'B',
+            'q3': 'C',
+            'q4': 'C',
+            'q5': 'C'
+        }
+
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 6)
+        }
+
+        unanswered = [k for k, v in answers.items() if not v]
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve_two')
+
+        user_answers = {f'q{i}': request.POST.get(f'q{i}', '').strip() for i in range(1, 6)}
+        correct_count = sum(1 for q, ans in user_answers.items() if ans == correct_answers.get(q))
+        total_questions = len(correct_answers)
+
+        #  Count previous attempts
+        attempt_number = get_attempt_number(request.user, 'Video Two')
+
+        try:
+            Submission.objects.create(
+                title='Video Two',
+                user=request.user,
+                answers=answers,
+                retries=attempt_number
+            )
+            messages.success(
+                request,
+                f'Quiz submitted! Attempt #{attempt_number}. You scored {correct_count}/{total_questions}.'
+            )
+            return redirect('problem_to_solve_two')
+        except Exception as e:
+            messages.error(request, f'Error submitting quiz: {str(e)}')
+            return render(request, 'problem-to-solve-two.html')
+
+    return render(request, 'problem-to-solve-two.html')
+
+
+@login_required
+def problem_to_solve_three(request):
+    if request.method == 'POST':
+        correct_answers = {
+            'q1': 'A',
+            'q2': 'D',
+            'q3': 'A',
+            'q4': 'D',
+            'q5': 'D'
+        }
+
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 6)
+        }
+
+        unanswered = [k for k, v in answers.items() if not v]
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve_three')
+
+        user_answers = {f'q{i}': request.POST.get(f'q{i}', '').strip() for i in range(1, 6)}
+        correct_count = sum(1 for q, ans in user_answers.items() if ans == correct_answers.get(q))
+        total_questions = len(correct_answers)
+
+        #  Count previous attempts
+        attempt_number = get_attempt_number(request.user, 'Video Three')
+
+        try:
+            Submission.objects.create(
+                title='Video Three',
+                user=request.user,
+                answers=answers,
+                retries=attempt_number
+            )
+            messages.success(
+                request,
+                f'Quiz submitted! Attempt #{attempt_number}. You scored {correct_count}/{total_questions}.'
+            )
+            return redirect('problem_to_solve_three')
+        except Exception as e:
+            messages.error(request, f'Error submitting quiz: {str(e)}')
+            return render(request, 'problem-to-solve-three.html')
+
+    return render(request, 'problem-to-solve-three.html')
+
+
+@login_required
+def problem_to_solve_four(request):
+    if request.method == 'POST':
+        correct_answers = {
+            'q1': 'A',
+            'q2': 'B',
+            'q3': 'C',
+            'q4': 'D',
+            'q5': 'A'
+        }
+
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 6)
+        }
+
+        unanswered = [k for k, v in answers.items() if not v]
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('problem_to_solve_four')
+
+        user_answers = {f'q{i}': request.POST.get(f'q{i}', '').strip() for i in range(1, 6)}
+        correct_count = sum(1 for q, ans in user_answers.items() if ans == correct_answers.get(q))
+        total_questions = len(correct_answers)
+
+        # Count previous attempts
+        attempt_number = get_attempt_number(request.user, 'Video Four')
+
+        try:
+            Submission.objects.create(
+                title='Video Four',
+                user=request.user,
+                answers=answers,
+                retries=attempt_number
+            )
+            messages.success(
+                request,
+                f'Quiz submitted! Attempt #{attempt_number}. You scored {correct_count}/{total_questions}.'
+            )
+            return redirect('problem_to_solve_four')
+        except Exception as e:
+            messages.error(request, f'Error submitting quiz: {str(e)}')
+            return render(request, 'problem-to-solve-four.html')
+
+    return render(request, 'problem-to-solve-four.html')
+
+
+@login_required
+def post_test(request):
+    if request.method == 'POST':
+        CORRECT_ANSWERS = {
+            'pt1': 'B',
+            'pt2': 'C',
+            'pt3': 'C',
+            'pt4': 'B',
+            'pt5': 'C',
+            'pt6': 'B',
+            'pt7': 'B',
+            'pt8': 'C',
+            'pt9': 'C',
+            'pt10': 'B'
+        }
+
+        answers = {
+            f'post{i}': request.POST.get(f'pt{i}', '').strip()
+            for i in range(1, 11)
+        }
+
+        unanswered = [k for k, v in answers.items() if not v]
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('post_test')
+
+        correct_count = sum(
+            1 for i in range(1, 11)
+            if request.POST.get(f'pt{i}', '').strip() == CORRECT_ANSWERS[f'pt{i}']
+        )
+
+        answers['correct'] = correct_count
+
+        # ✅ Count previous attempts
+        attempt_number = get_attempt_number(request.user, 'Post Test')
+
+        try:
+            Submission.objects.create(
+                title='Post Test',
+                user=request.user,
+                answers=answers,
+                retries=attempt_number
+            )
+            messages.success(
+                request,
+                f'Post-test submitted! Attempt #{attempt_number}. You scored {correct_count}/10.'
+            )
+            return redirect('survey_two')
+        except Exception as e:
+            messages.error(request, f'Error submitting post-test: {str(e)}')
+            return render(request, 'post-test.html')
+
+    return render(request, 'post-test.html')
+@login_required
+def post_test(request):
+    if request.method == 'POST':
+        # Define correct answers
+        CORRECT_ANSWERS = {
+            'pt1': 'B',
+            'pt2': 'C',
+            'pt3': 'C',
+            'pt4': 'B',
+            'pt5': 'C',
+            'pt6': 'B',
+            'pt7': 'B',
+            'pt8': 'C',
+            'pt9': 'C',
+            'pt10': 'B'
+        }
+
+        # Collect answers
+        answers = {
+            f'post{i}': request.POST.get(f'pt{i}', '').strip()
+            for i in range(1, 11)
+        }
+
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+
+        if unanswered:
+            messages.error(
+                request, 
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('post_test')
+
+        # Calculate correct answers
+        correct_count = sum(
+            1 for i in range(1, 11)
+            if request.POST.get(f'pt{i}', '').strip() == CORRECT_ANSWERS[f'pt{i}']
+        )
+
+        # Add correct count to answers dictionary
+        answers['correct'] = correct_count
+
+        # Check for duplicate submission (optional)
+        existing = Submission.objects.filter(
+            user=request.user,
+            title='Post Test'
+        ).first()
+
+        if existing:
+            messages.error(request, 'Post-test has already been submitted.')
+            return redirect('survey_two')  
+
+        # Create submission
+        try:
+            submission = Submission.objects.create(
+                title='Post Test',
+                user=request.user,
+                answers=answers
+            )
+            messages.success(request, 'Post-test submitted successfully!')
+            return redirect('survey_two')  
+        except Exception as e:
+            messages.error(request, f'Error submitting post-test: {str(e)}')
+            return render(request, 'post-test.html')
+
+    # GET request - show the form
+    return render(request, 'post-test.html')
+
+
+
+@login_required
+def survey_two(request):
+    if request.method == 'POST':
+        title = 'Survey Two'
+        user = request.user
+
+        # Collect answers for all 16 questions (q1 to q16)
+        answers = {
+            f'question{i}': request.POST.get(f'q{i}', '').strip()
+            for i in range(1, 17)  # 16 questions total
+        }
+
+        # Check if all questions are answered
+        unanswered = [k for k, v in answers.items() if not v]
+
+        if unanswered:
+            messages.error(
+                request,
+                f'Please answer all questions. Missing: {len(unanswered)} question(s).'
+            )
+            return redirect('survey_two')
+
+        # Count previous attempts and set retry number
+        attempt_number = Submission.objects.filter(
+            user=user,
+            title=title
+        ).count() + 1
+
+        # Create submission
+        try:
+            Submission.objects.create(
+                title=title,
+                user=user,
+                answers=answers,
+                retries=attempt_number 
+            )
+            messages.success(
+                request,
+                f'Survey submitted successfully! (Attempt #{attempt_number})'
+            )
+            return redirect('learning')
+        except Exception as e:
+            messages.error(request, f'Error submitting survey: {str(e)}')
+            return render(request, 'survey2.html')
+
+    # GET request - just render the form
+    return render(request, 'survey2.html')
+
+
+# def courses(request):
+#     if not request.user.is_authenticated:
+#         messages.error(request, 'Please login to access the course content!')
+#         return redirect('login')
+
+#     courses = Course.objects.all()
+#     myFilter = CourseFilter(request.GET, queryset=courses)
+#     filtered_courses = myFilter.qs  # Apply search filter
+
+#     # Pagination
+#     paginator = Paginator(filtered_courses, 12)  # Show 6 courses per page
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         'courses': page_obj,  
+#         'myFilter': myFilter,
+#         'paginator': paginator,  
+#         'page_obj': page_obj,  
+#     }
+
+#     return render(request, 'courses.html', context)
+
+
+def course_detail(request, slug):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    course = get_object_or_404(Course, slug=slug)
+    return render(request, 'content.html', {'item': course})
+
+
+
+
+
+@csrf_exempt
+def track_video_event(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        video_id = data.get('video_id')
+        event_type = data.get('event_type')
+        timestamp = data.get('timestamp')
+        course_title = data.get('course_title')  # Get the course title
+        course_id = data.get('course_id')  # Assuming you are also sending course_id
+        watch_duration = data.get('watch_duration')  # Get watch duration in seconds
+
+        # Optionally, get the user from the request if authenticated
+        user = request.user if request.user.is_authenticated else None
+
+        # Optionally, you can get the course object if you need to store it (useful for the foreign key)
+        course = Course.objects.get(id=course_id) if course_id else None
+
+        # Create and save the video event
+        video_event = VideoEvent.objects.create(
+            user=user,
+            video_id=video_id,
+            event_type=event_type,
+            timestamp=timestamp,
+            course_title=course_title,  # Store the course title in the event
+            course=course,  # Link to the Course model if needed
+            watch_duration=watch_duration  # Store the watch duration
+        )
+
+        return JsonResponse({'message': 'Video event tracked successfully'})
+
+
+

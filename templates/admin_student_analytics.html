@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Analytics - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">👥 Student Learning Analytics</h1>
+
+      <!-- Summary Stats -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-primary text-uppercase mb-1">Total Students</div>
+              <div class="h3 mb-0">{{ total_students }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-success text-uppercase mb-1">Avg Completion</div>
+              <div class="h3 mb-0">
+                {% if student_stats %}
+                  {% with avg_rate=student_stats|sum_key:"completion_rate"|divide:total_students %}
+                    {{ avg_rate|floatformat:1 }}%
+                  {% endwith %}
+                {% else %}
+                  0%
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-info text-uppercase mb-1">Avg Watch Time</div>
+              <div class="h3 mb-0">
+                {% if student_stats %}
+                  {% with avg_time=student_stats|sum_key:"total_watched_minutes"|divide:total_students %}
+                    {{ avg_time|floatformat:1 }}m
+                  {% endwith %}
+                {% else %}
+                  0m
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Student Table -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">Student Progress Summary</h6>
+          <button class="btn btn-sm btn-outline-primary" onclick="exportToCSV()">
+            📥 Export to CSV
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="studentTable">
+              <thead class="table-light">
+                <tr>
+                  <th onclick="sortTable(0)">👤 Student <span class="sort-arrow"></span></th>
+                  <th onclick="sortTable(1)">📹 Videos <span class="sort-arrow"></span></th>
+                  <th onclick="sortTable(2)">✓ Completed <span class="sort-arrow"></span></th>
+                  <th onclick="sortTable(3)">📊 Completion Rate <span class="sort-arrow"></span></th>
+                  <th onclick="sortTable(4)">⏱️ Total Watch <span class="sort-arrow"></span></th>
+                  <th onclick="sortTable(5)">⏰ Last Activity <span class="sort-arrow"></span></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in student_stats %}
+                <tr>
+                  <td>
+                    <strong>{{ student.user.get_full_name|default:student.user.username }}</strong><br>
+                    <small class="text-muted">{{ student.user.email }}</small>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary">{{ student.total_videos_enrolled }}</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-success">{{ student.completed_videos }}</span>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="progress flex-grow-1 me-2" style="min-width: 100px; height: 20px;">
+                        <div class="progress-bar {% if student.completion_rate >= 80 %}bg-success{% elif student.completion_rate >= 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ student.completion_rate }}%"
+                             aria-valuenow="{{ student.completion_rate }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                      <small>{{ student.completion_rate }}%</small>
+                    </div>
+                  </td>
+                  <td>{{ student.total_watched_minutes }} mins</td>
+                  <td>
+                    {% if student.last_activity %}
+                      {{ student.last_activity|date:"M d, Y g:i A" }}
+                    {% else %}
+                      <span class="text-muted">-</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-info" 
+                            onclick="viewStudentDetail('{{ student.user.id }}')">
+                      View
+                    </button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No student data available yet
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Categories -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Completion Status</h6>
+            </div>
+            <div class="card-body text-center">
+              <canvas id="completionChart" height="80"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Student Categories</h6>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><strong>🌟 Excellent (≥80%)</strong></span>
+                  <span class="badge bg-success">
+                    {% with excellent=student_stats|sum_key:"completion_rate"|items_gte:80 %}
+                      {{ excellent|length|default:0 }}
+                    {% endwith %}
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><strong>👍 Good (50-79%)</strong></span>
+                  <span class="badge bg-warning">
+                    {% with good_count=student_stats|filter_completion:"50to79" %}
+                      {{ good_count }}
+                    {% endwith %}
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><strong>⚠️ Needs Attention (<50%)</strong></span>
+                  <span class="badge bg-danger">
+                    {% with needs_help=student_stats|filter_completion:"below50" %}
+                      {{ needs_help }}
+                    {% endwith %}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .border-left-primary { border-left: 4px solid #4e73df !important; }
+  .border-left-success { border-left: 4px solid #1cc88a !important; }
+  .border-left-info { border-left: 4px solid #36b9cc !important; }
+
+  table th {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  table th:hover {
+    background-color: #f0f0f0;
+  }
+
+  .sort-arrow {
+    margin-left: 5px;
+    opacity: 0.5;
+  }
+
+  .sort-arrow.asc::after { content: " ▲"; }
+  .sort-arrow.desc::after { content: " ▼"; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+  // Prepare data for charts
+  const completionRates = [{% for student in student_stats %}{{ student.completion_rate }}{% if not forloop.last %},{% endif %}{% endfor %}];
+
+  // Categorize students
+  let excellent = 0, good = 0, needsHelp = 0;
+  completionRates.forEach(rate => {
+    if (rate >= 80) excellent++;
+    else if (rate >= 50) good++;
+    else needsHelp++;
+  });
+
+  // Completion Chart
+  if (document.getElementById('completionChart')) {
+    new Chart(document.getElementById('completionChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Excellent (≥80%)', 'Good (50-79%)', 'Needs Help (<50%)'],
+        datasets: [{
+          data: [excellent, good, needsHelp],
+          backgroundColor: ['#1cc88a', '#f6c23e', '#e74c3c'],
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  }
+
+  // Table sorting
+  function sortTable(columnIndex) {
+    const table = document.getElementById('studentTable');
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+    rows.sort((a, b) => {
+      const aVal = a.children[columnIndex].textContent.trim();
+      const bVal = b.children[columnIndex].textContent.trim();
+
+      // Try numeric comparison
+      const aNum = parseFloat(aVal);
+      const bNum = parseFloat(bVal);
+
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return aNum - bNum;
+      }
+
+      return aVal.localeCompare(bVal);
+    });
+
+    rows.forEach(row => table.querySelector('tbody').appendChild(row));
+  }
+
+  // Export to CSV
+  function exportToCSV() {
+    const table = document.getElementById('studentTable');
+    let csv = [];
+
+    // Get headers
+    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+    csv.push(headers.join(','));
+
+    // Get rows
+    table.querySelectorAll('tbody tr').forEach(row => {
+      const cells = Array.from(row.querySelectorAll('td')).slice(0, -1).map(td => '"' + td.textContent.trim() + '"');
+      csv.push(cells.join(','));
+    });
+
+    // Download
+    const csvContent = 'data:text/csv;charset=utf-8,' + csv.join('\n');
+    const link = document.createElement('a');
+    link.setAttribute('href', encodeURI(csvContent));
+    link.setAttribute('download', 'student_analytics.csv');
+    link.click();
+  }
+
+  // View student detail
+  function viewStudentDetail(studentId) {
+    alert('Detailed view for student: ' + studentId + '\n(This would link to individual student dashboard)');
+  }
+</script>
+{% endblock %}

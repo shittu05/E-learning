@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Video Analytics - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="h3 mb-4">📊 Video Analytics Dashboard</h1>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-primary text-uppercase mb-1">Total Videos</div>
+              <div class="h3 mb-0">{{ total_videos }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-success text-uppercase mb-1">Unique Viewers</div>
+              <div class="h3 mb-0">{{ total_unique_users }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-warning text-uppercase mb-1">Avg Watch Time</div>
+              <div class="h3 mb-0">
+                {% if analytics_data %}
+                  {{ analytics_data|dictsortreverse:"avg_watch_minutes"|first|get_item:"avg_watch_minutes" }} min
+                {% else %}
+                  N/A
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="text-info text-uppercase mb-1">Total Plays</div>
+              <div class="h3 mb-0">
+                {% with total_plays=analytics_data|sum_key:"total_events" %}
+                  {{ total_plays }}
+                {% endwith %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Table -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Video Performance</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Video ID</th>
+                  <th>Course</th>
+                  <th>Unique Viewers</th>
+                  <th>Avg Watch Time</th>
+                  <th>Max Watch Time</th>
+                  <th>Total Plays</th>
+                  <th>Engagement %</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for video in analytics_data %}
+                <tr>
+                  <td>
+                    <small class="text-monospace">
+                      {{ video.video_id|truncatechars:50 }}
+                    </small>
+                  </td>
+                  <td>{{ video.course_title }}</td>
+                  <td>
+                    <span class="badge bg-primary">{{ video.total_users }}</span>
+                  </td>
+                  <td>{{ video.avg_watch_minutes }} min ({{ video.avg_watch_time }}s)</td>
+                  <td>{{ video.max_watch_time|floatformat:0 }} sec</td>
+                  <td><span class="badge bg-info">{{ video.total_events }}</span></td>
+                  <td>
+                    {% with engagement=video.avg_watch_minutes|divide:"7"|multiply:"100" %}
+                      <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {% if engagement > 100 %}100{% else %}{{ engagement|floatformat:0 }}{% endif %}%"
+                             aria-valuenow="{{ engagement }}" aria-valuemin="0" aria-valuemax="100">
+                          {% if engagement > 100 %}100%{% else %}{{ engagement|floatformat:0 }}%{% endif %}
+                        </div>
+                      </div>
+                    {% endwith %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No video data available yet
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Section (using Chart.js) -->
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Watch Time Distribution</h6>
+            </div>
+            <div class="card-body">
+              <canvas id="watchTimeChart" height="80"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Viewer Count by Video</h6>
+            </div>
+            <div class="card-body">
+              <canvas id="viewerChart" height="80"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .border-left-primary { border-left: 4px solid #4e73df !important; }
+  .border-left-success { border-left: 4px solid #1cc88a !important; }
+  .border-left-warning { border-left: 4px solid #f6c23e !important; }
+  .border-left-info { border-left: 4px solid #36b9cc !important; }
+  .text-monospace { font-family: 'Courier New', monospace; font-size: 0.875rem; }
+</style>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+<script>
+  // Prepare data for charts
+  const videoLabels = [{% for video in analytics_data %}'{{ video.course_title|truncatewords:3 }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+  const watchTimeData = [{% for video in analytics_data %}{{ video.avg_watch_minutes }}{% if not forloop.last %},{% endif %}{% endfor %}];
+  const viewerData = [{% for video in analytics_data %}{{ video.total_users }}{% if not forloop.last %},{% endif %}{% endfor %}];
+
+  const colors = ['#4e73df', '#1cc88a', '#f6c23e', '#36b9cc', '#858796', '#e74c3c'];
+
+  // Watch Time Chart
+  if (document.getElementById('watchTimeChart')) {
+    new Chart(document.getElementById('watchTimeChart'), {
+      type: 'bar',
+      data: {
+        labels: videoLabels,
+        datasets: [{
+          label: 'Avg Watch Time (minutes)',
+          data: watchTimeData,
+          backgroundColor: colors.slice(0, videoLabels.length),
+          borderColor: colors.slice(0, videoLabels.length),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  // Viewer Count Chart
+  if (document.getElementById('viewerChart')) {
+    new Chart(document.getElementById('viewerChart'), {
+      type: 'doughnut',
+      data: {
+        labels: videoLabels,
+        datasets: [{
+          data: viewerData,
+          backgroundColor: colors.slice(0, videoLabels.length),
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}
